@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:notes/screens/add_note_screen.dart';
+import 'package:notes/screens/history_page.dart';
 import 'package:notes/screens/main_screen.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -14,13 +15,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    
     AddNoteScreen(),
-
-    Text(
-      'Profile Page',
-      style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
-    ),
+    HistoryScreen(),
     Text(
       'Profile Page',
       style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
@@ -50,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon:  Icon(EneftyIcons.add_circle_outline),
+            icon: Icon(EneftyIcons.add_circle_outline),
             label: 'Add a Note',
           ),
           BottomNavigationBarItem(
@@ -65,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: _selectedIndex,
         backgroundColor: kMobileBackgroundColor,
         selectedItemColor: Colors.white,
-        unselectedItemColor: Color.fromARGB(255, 74, 74, 87),
+        unselectedItemColor: const Color.fromARGB(255, 74, 74, 87),
         iconSize: 25,
         showUnselectedLabels: false,
         showSelectedLabels: false,
