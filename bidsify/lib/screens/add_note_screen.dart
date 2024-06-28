@@ -40,13 +40,32 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                OptionsCard(title: 'Create a Bid', icon: Icon(EneftyIcons.card_add_outline), height: 90, width: 175),
-                OptionsCard(title: 'Create an\nAuction', icon: Icon(EneftyIcons.courthouse_outline), height: 90, width: 175),
+                OptionsCard(
+                    title: 'Create a Bid',
+                    icon: Icon(EneftyIcons.card_add_outline),
+                    height: 90,
+                    width: 175),
+                OptionsCard(
+                    title: 'Create an\nAuction',
+                    icon: Icon(EneftyIcons.courthouse_outline),
+                    height: 90,
+                    width: 175),
               ],
             ),
           ),
-
-          Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: ViewCard(title: 'Auction 1', height: 190, width: double.infinity))
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: ViewCard(
+              title: 'Here Goes Auction 1',
+              height: 184,
+              width: double.infinity,
+              currentBid: 'LOL',
+              yourBid: 'LOL',
+              auctionName: 'Here Goes Auction 1',
+              bidBy: 'Sayan',
+              onClick: null,
+            ),
+          ),
         ],
       ),
     );
