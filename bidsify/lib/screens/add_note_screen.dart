@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/widgets/auction_card.dart';
 
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({super.key});
@@ -30,13 +33,15 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     });
   }
 
+  void onClick() {}
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(20, 50, 20, 20),
+            padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -54,16 +59,13 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: ViewCard(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: AuctionCard(
               title: 'Here Goes Auction 1',
-              height: 184,
-              width: double.infinity,
-              currentBid: 'LOL',
-              yourBid: 'LOL',
-              auctionName: 'Here Goes Auction 1',
-              bidBy: 'Sayan',
-              onClick: null,
+              bidder: {"Sayan": ""},
+              initialBid: 0.0,
+              currentBid: 10.2,
+              onClick: onClick,
             ),
           ),
         ],
