@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:enefty_icons/enefty_icons.dart';
+import 'package:notes/screens/add_note_screen.dart';
 import 'package:notes/screens/main_screen.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -13,10 +14,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    Text(
-      'Search Page',
-      style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
-    ),
+    
+    AddNoteScreen(),
+
     Text(
       'Profile Page',
       style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),

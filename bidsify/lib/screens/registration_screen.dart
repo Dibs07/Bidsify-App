@@ -1,6 +1,8 @@
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter/material.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/contract_link/contract_linking.dart';
+import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen';
@@ -12,6 +14,7 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   bool checkBoxState = false;
+  late String _name, _email, _password;
 
   @override
   Widget build(BuildContext context) {
@@ -150,4 +153,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           )),
     );
   }
+    _createAccount() {
+    var contractLinking = Provider.of<ContractLinking>(context, listen: false);
+    contractLinking.createAccount(_name, _password, _email);
+  }
 }
+
+
