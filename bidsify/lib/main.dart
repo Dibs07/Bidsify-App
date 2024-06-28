@@ -32,7 +32,7 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: kMobileBackgroundColor
       ),
       // initialRoute: _user != null ? OnboardingScreen.id : HomeScreen.id,
-      initialRoute: '/home_screen',
+      initialRoute: '/',
       routes: {
         '/': (context) => OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
