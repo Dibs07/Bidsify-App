@@ -29,7 +29,7 @@ class ContractLinking extends ChangeNotifier {
   }
 
   initialSetup() async {
-    _client = await Web3Client(_rpcUrl, Client(), socketConnector: () {
+    _client = Web3Client(_rpcUrl, Client(), socketConnector: () {
       return IOWebSocketChannel.connect(_wsUrl).cast<String>();
     });
     await getAbi();
@@ -42,16 +42,16 @@ class ContractLinking extends ChangeNotifier {
         await rootBundle.loadString("src/artifacts/Auth.json");
     var jsonFile = jsonDecode(artifactString);
     _abiCode = jsonEncode(jsonFile["abi"]);
-    //print(_abiCode);
     _contractAddress =
         EthereumAddress.fromHex(jsonFile["networks"]["5777"]["address"]);
   }
 
   getCredentials() async {
-    // ignore: deprecated_member_use
-    _credentials = await _client.credentialsFromPrivateKey(_privateKey);
+    _credentials = await credentialsFromPrivateKey(_privateKey);
   }
-
+Future<EthPrivateKey> credentialsFromPrivateKey(String privateKey) {
+  return Future.value(EthPrivateKey.fromHex(privateKey));
+}
   getDeployedContract() async {
     _contract = DeployedContract(
         ContractAbi.fromJson(_abiCode, "Auth"), _contractAddress);
