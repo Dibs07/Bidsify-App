@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes/constants/constants.dart';
 import 'package:notes/screens/home_screen.dart';
 import 'package:notes/screens/login_screen.dart';
 import 'package:notes/screens/registration_screen.dart';
@@ -26,10 +27,9 @@ class _MyAppState extends State<MyApp> {
           Theme.of(context).textTheme,
         ),
         splashColor: Colors.transparent, // Set splash color to transparent
-        highlightColor:
-            Colors.transparent, // Set highlight color to transparent
-        splashFactory: NoSplash.splashFactory, // Custom splash factory
-        // scaffoldBackgroundColor: kMobileBackgroundColor
+        highlightColor: Colors.transparent, // Set highlight color to transparent
+        splashFactory: NoSplash.splashFactory, // Custom splash factory 
+        scaffoldBackgroundColor: kMobileBackgroundColor
       ),
       // initialRoute: _user != null ? OnboardingScreen.id : HomeScreen.id,
       initialRoute: '/home_screen',
