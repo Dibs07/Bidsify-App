@@ -46,7 +46,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             ),
           ),
 
-          Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: OptionsCard(title: 'Auction 1', height: 190, width: double.infinity))
+          Padding(padding: EdgeInsets.symmetric(horizontal: 20), child: ViewCard(title: 'Auction 1', height: 190, width: double.infinity))
         ],
       ),
     );
