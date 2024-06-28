@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/screens/home_screen.dart';
 import 'package:notes/screens/login_screen.dart';
@@ -14,7 +15,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -39,7 +40,7 @@ class _MyAppState extends State<MyApp> {
           splashFactory: NoSplash.splashFactory, // Custom splash factory
           scaffoldBackgroundColor: kMobileBackgroundColor),
       // initialRoute: _user != null ? OnboardingScreen.id : HomeScreen.id,
-      initialRoute: '/',
+      initialRoute: '/home_screen',
       routes: {
         '/': (context) => OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
