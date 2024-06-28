@@ -6,10 +6,12 @@ import 'package:notes/screens/onboarding_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -24,8 +26,9 @@ class _MyAppState extends State<MyApp> {
           Theme.of(context).textTheme,
         ),
         splashColor: Colors.transparent, // Set splash color to transparent
-        highlightColor: Colors.transparent, // Set highlight color to transparent
-        splashFactory: NoSplash.splashFactory, // Custom splash factory 
+        highlightColor:
+            Colors.transparent, // Set highlight color to transparent
+        splashFactory: NoSplash.splashFactory, // Custom splash factory
         // scaffoldBackgroundColor: kMobileBackgroundColor
       ),
       // initialRoute: _user != null ? OnboardingScreen.id : HomeScreen.id,
