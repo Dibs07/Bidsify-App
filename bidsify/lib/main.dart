@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
         splashColor: Colors.transparent, // Set splash color to transparent
         highlightColor: Colors.transparent, // Set highlight color to transparent
         splashFactory: NoSplash.splashFactory, // Custom splash factory 
-        // scaffoldBackgroundColor: kMobileBackgroundColor
+        scaffoldBackgroundColor: kMobileBackgroundColor
       ),
       // initialRoute: _user != null ? OnboardingScreen.id : HomeScreen.id,
       initialRoute: '/home_screen',
