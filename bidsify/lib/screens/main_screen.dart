@@ -15,19 +15,19 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: kMobileBackgroundColor,
       appBar: AppBar(
         title: Text(
-              "Dibakar Banerjee",
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: 20.0,
-              ),
-            ),
+          "Dibakar Banerjee",
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 20.0,
+          ),
+        ),
+        backgroundColor: kMobileBackgroundColor,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          
           Center(
             child: Column(
               children: [
