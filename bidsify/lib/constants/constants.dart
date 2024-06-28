@@ -138,3 +138,53 @@ class SmallButtons extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+class ViewCard extends StatelessWidget {
+
+  final String title;
+  final Icon? icon;
+  final double height;
+  final double width;
+
+  const ViewCard({
+    super.key,
+    required this.title,
+    this.icon,
+    required this.height,
+    required this.width
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Color(0x663348B5),
+      ),
+    
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          icon ?? Container(),
+          const SizedBox(width: 12,),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16
+            ),
+          )
+    
+        ],
+      ),
+    
+    );
+  }
+}
