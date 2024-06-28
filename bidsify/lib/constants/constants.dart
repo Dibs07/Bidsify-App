@@ -35,8 +35,9 @@ class myButton extends StatelessWidget {
   final double height;
   final double width;
   final String text;
+  final Function? onClick;
 
-  const myButton({super.key, required this.width, required this.height, required this.text});
+  const myButton({super.key, required this.width, required this.height, required this.text, this.onClick});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class myButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         onPressed: () {
-          Navigator.push;
+          onClick ?? () {};
         },
         style: ElevatedButton.styleFrom(    
           padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -149,13 +150,23 @@ class ViewCard extends StatelessWidget {
   final Icon? icon;
   final double height;
   final double width;
+  final String currentBid;
+  final String yourBid;
+  final String auctionName;
+  final String bidBy;
+  final Function? onClick;
 
   const ViewCard({
     super.key,
     required this.title,
     this.icon,
     required this.height,
-    required this.width
+    required this.width,
+    required this.currentBid,
+    required this.yourBid,
+    required this.auctionName,
+    required this.bidBy,
+    this.onClick
   });
 
   @override
@@ -168,20 +179,75 @@ class ViewCard extends StatelessWidget {
         color: Color(0x663348B5),
       ),
     
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          icon ?? Container(),
-          const SizedBox(width: 12,),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16
-            ),
-          )
-    
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              icon ?? Container(),
+              const SizedBox(width: 12,),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 12, 16, 8),
+                child: Text(           
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+          
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(           
+                  bidBy,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+          
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                    child: Text(           
+                      'Current Bid: $currentBid',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+          
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 19, vertical: 8),
+                    child: Text(           
+                    'Your Bid: $yourBid',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+            child: myButton(height: 50, width: 120, text: 'Set Bid', onClick: onClick),
+          ),
+
         ],
       ),
     
