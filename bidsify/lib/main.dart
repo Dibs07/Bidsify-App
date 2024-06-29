@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
           splashFactory: NoSplash.splashFactory, // Custom splash factory
           scaffoldBackgroundColor: kMobileBackgroundColor),
       // initialRoute: _user != null OnboardingScreen.id : HomeScreen.id,
-      initialRoute: _authService.user != null ? '/user_details' : '/',
+      initialRoute: _authService.user != null ? '/login' : '/',
       routes: {
         '/': (context) => OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
