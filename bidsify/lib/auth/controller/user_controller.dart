@@ -10,7 +10,7 @@ class UserController {
     required this.ref,
   });
 
-  void signIn()async{
-    await
+  void signIn(String name, String email, String password) async {
+    await repository.signin(name, email, password);
   }
 }

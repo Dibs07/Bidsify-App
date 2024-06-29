@@ -200,21 +200,4 @@ class _LoginScreenState extends State<LoginScreen> {
           )),
     );
   }
-<<<<<<< HEAD
-=======
-  _login() async {
-    final form = _formKey.currentState;
-    if (form!.validate()) {
-      form.save();
-      bool res = await _authService.login(email!, password!);
-      if (res) {
-        Navigator.popAndPushNamed(context, '/user_preferences');
-      } else {
-        print("Failed");
-      }
-    } else {
-      print("Invalid");
-    }
-  }
->>>>>>> 6fbc97d8ebc0bf6a38076f8ae091d423c816c622
 }
