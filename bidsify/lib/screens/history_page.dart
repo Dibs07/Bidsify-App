@@ -19,7 +19,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           children: [
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: AuctionCard(
+                child: BidCard(
                   title: 'Here Goes Auction 1',
                   bidder: {"name": "Sayan"},
                   initialBid: 0.0,

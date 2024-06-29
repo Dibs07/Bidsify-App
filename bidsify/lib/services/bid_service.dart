@@ -1,12 +1,10 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/model/bid_model.dart';
 import 'package:notes/model/item_model.dart';
 import 'package:notes/services/auth_service.dart';
 
-class BidService{
+class BidService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   late AuthService _authService;
   CollectionReference? items;
@@ -16,17 +14,17 @@ class BidService{
           fromFirestore: (snapshots, _) => ItemModel.fromMap(
             snapshots.data()!,
           ),
-          toFirestore: (userProfile, _) => userProfile.toMap(),
+          toFirestore: (item, _) => item.toMap(),
         );
-    bids = _db.collection('chats').withConverter<BidModel>(
+    bids = _db.collection('bids').withConverter<BidModel>(
           fromFirestore: (snapshots, _) => BidModel.fromMap(
             snapshots.data()!,
           ),
-          toFirestore: (chat, _) => chat.toMap(),
+          toFirestore: (bid, _) => bid.toMap(),
         );
   }
 
-  BidService(){
+  BidService() {
     setUp();
     _authService = GetIt.instance.get<AuthService>();
   }
@@ -41,6 +39,32 @@ class BidService{
   Future<void> createbid({required BidModel bid}) async {
     try {
       await bids?.doc(bid.uid).set(bid);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Stream<QuerySnapshot<ItemModel>> getItemsbyownerid(
+      {required String ownerId}) {
+    return items!.where('ownerId', isEqualTo: ownerId).snapshots()
+        as Stream<QuerySnapshot<ItemModel>>;
+  }
+
+  Stream<List<BidModel>> getallBids() {
+    return bids!
+        .where('ownerId', isNotEqualTo: _authService.user!.uid)
+        .snapshots() as Stream<List<BidModel>>;
+  }
+
+  Stream<List<BidModel>> getBidsbyownerID() {
+    return bids!.where('ownerId', isEqualTo: _authService.user!.uid).snapshots()
+        as Stream<List<BidModel>>;
+  }
+
+  Future<void> updateBid(
+      {required String bidId, required double bidValue}) async {
+    try {
+      await bids!.doc(bidId).update({'maxBid': bidValue});
     } catch (e) {
       print(e);
     }

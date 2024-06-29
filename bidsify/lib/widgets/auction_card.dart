@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:notes/constants/constants.dart';
 
-class AuctionCard extends StatelessWidget {
+class BidCard extends StatelessWidget {
   final String title;
   final Map<String, String> bidder;
   final double initialBid;
   final double currentBid;
   final VoidCallback onClick;
   final String? transactionId;
-  const AuctionCard({
+  const BidCard({
     super.key,
     required this.title,
     required this.bidder,

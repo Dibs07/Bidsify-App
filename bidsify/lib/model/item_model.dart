@@ -4,12 +4,14 @@ class ItemModel {
   final String descrription;
   final String ownerId;
   final String? itemPic;
+  final double? price;
 
   ItemModel({
     required this.uid,
     required this.name,
     required this.descrription,
     required this.ownerId,
+    required this.price,
     this.itemPic,
   });
 
@@ -20,6 +22,7 @@ class ItemModel {
       'description': descrription,
       'ownerId': ownerId,
       'itemPic': itemPic,
+      'price': price,
     };
   }
 
@@ -30,6 +33,7 @@ class ItemModel {
       descrription: map['descrription'] ?? "",
       ownerId: map['ownerId'] ?? "",
       itemPic: map['itemPic'] ?? "",
+      price: map['price'] ?? 0.0,
     );
   }
 }
