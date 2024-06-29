@@ -18,6 +18,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _authService = GetIt.instance.get<AuthService>();
   }
 
+  var bids = ["Bid1", "Bid2", "Bid3", "Bid4"];
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -56,24 +58,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 20.0),
-              child: Text("Dibakar",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
+              child: Text(
+                "Dibakar",
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20.0,
+                  color: Colors.white,
                 ),
               ),
-              Padding(
+            ),
+            Padding(
               padding: EdgeInsets.only(top: 15.0),
-              child: Text("Email",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18.0,
-                    color: Colors.white,
-                  ),
+              child: Text(
+                "Email",
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18.0,
+                  color: Colors.white,
                 ),
               ),
+            ),
+            Container(
+              child: ListView.builder(
+                  itemCount: bids.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            bids[index],
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+            )
           ],
         ),
       ),

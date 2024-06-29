@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
           splashFactory: NoSplash.splashFactory, // Custom splash factory
           scaffoldBackgroundColor: kMobileBackgroundColor),
       // initialRoute: _user != null OnboardingScreen.id : HomeScreen.id,
-      initialRoute: _authService.user != null ? '/home_screen' : '/',
+      initialRoute: _authService.user != null ? '/login' : '/',
       routes: {
         '/': (context) => OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
@@ -68,7 +68,8 @@ class _MyAppState extends State<MyApp> {
         '/home_screen': (context) => MyHomePage(),
         '/user_preferences': (context) => const UserPreferences(),
         '/add_auction_page': (context) => AuctionPage(),
-        '/create_auction_page': (context) => CreateAuctionPage()
+        '/create_auction_page': (context) => CreateAuctionPage(),
+        '/user_details_form': (context) => const UserDetailsScreen(),
       },
     );
   }

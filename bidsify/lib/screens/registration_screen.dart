@@ -57,7 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       bool res = await _authService.register(_email!, _password!);
       if (res) {
         _showToast("Account Created", true);
-        Navigator.popAndPushNamed(context, '/home_screen');
+        Navigator.popAndPushNamed(context, '/user_details_form');
       } else {
         _showToast("Failed to Signin", false);
       }
@@ -195,7 +195,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       width: double.infinity,
                       text: 'Continue',
                       onClick: () {
-                        Navigator.popAndPushNamed(context, '/user_details');
+                        _signUp();
                       }),
                 ),
                 Padding(
