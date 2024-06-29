@@ -20,11 +20,6 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
 
 
-
-
-
-
-
       final _formKey = GlobalKey<FormState>();
       final TextEditingController _bidController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
@@ -62,10 +57,6 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       // You can also use the extracted values to update the UI or navigate to another page
     }
   }
-
-
-
-
 
 
   static List<Widget> _widgetOptions = <Widget>[

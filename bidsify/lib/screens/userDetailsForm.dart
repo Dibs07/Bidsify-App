@@ -131,7 +131,16 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       if (form!.validate()) {
                         form.save();
                         if (pfp == null) {
-                          throw Exception("Profile picture is required");
+                          await _dataService.addUser(
+                            userProfile: UserModel(
+                              uid: _authService.user!.uid,
+                              name: _name,
+                              email: _authService.user!.email,
+                              phoneNumber: _phoneNo,
+                              profilePic: 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg',
+                            ),
+                          );
+                          Navigator.pushNamed(context, '/home_screen');
                         }
                         if (_authService.user == null) {
                           throw Exception("User is not authenticated");
