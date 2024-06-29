@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/services/auth_service.dart';
+import 'package:notes/constants/constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,10 +17,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
   }
+
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          TextButton(
+            // style: ButtonStyle(
+            //   backgroundColor:  Colors.black,
+            // ),
+
+            onPressed: logout,
+            child: Padding(
+              padding: EdgeInsets.only(right: 10.0, top: 5.0),
+              child: Text(
+                'Logout',
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20.0,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+        backgroundColor: kMobileBackgroundColor,
+      ),
       body: Padding(
-        padding: EdgeInsets.only(top: 50.0),
+        padding: EdgeInsets.only(top: 100.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -31,24 +56,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 20.0),
-              child: TextButton(
-                // style: ButtonStyle(
-                //   backgroundColor:  Colors.black,
-                // ),
-                onPressed: logout,
-                child: Text('Logout',
+              child: Text("Dibakar",
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
                     fontSize: 20.0,
+                    color: Colors.white,
                   ),
                 ),
               ),
-            )
+              Padding(
+              padding: EdgeInsets.only(top: 15.0),
+              child: Text("Email",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
+
   logout() async {
     await _authService.logout();
     Navigator.pushNamed(context, '/login');

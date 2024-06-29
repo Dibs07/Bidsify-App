@@ -26,7 +26,7 @@ class UserModel {
       'profilePic': profilePic,
       'balance': balance,
       'preferences': preferences,
-      'phoneNumber':phoneNumber,
+      'phoneNumber': phoneNumber,
     };
   }
 
@@ -38,7 +38,7 @@ class UserModel {
       profilePic: map['profilePic'] ?? '',
       balance: map['balance'] ?? false,
       preferences: List<String>.from(map['preferences']),
-      phoneNumber: map['phoneNumber']
+      phoneNumber: map['phoneNumber'] ?? "",
     );
   }
 }

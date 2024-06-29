@@ -10,6 +10,7 @@ import 'package:notes/screens/registration_screen.dart';
 import 'package:notes/screens/onboarding_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:notes/screens/user_preferences.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/utils.dart';
 import 'firebase_options.dart';
@@ -55,13 +56,14 @@ class _MyAppState extends State<MyApp> {
               Colors.transparent, // Set highlight color to transparent
           splashFactory: NoSplash.splashFactory, // Custom splash factory
           scaffoldBackgroundColor: kMobileBackgroundColor),
-      // initialRoute: _user != null ? OnboardingScreen.id : HomeScreen.id,
+      // initialRoute: _user != null OnboardingScreen.id : HomeScreen.id,
       initialRoute: _authService.user != null ? '/home_screen' : '/',
       routes: {
         '/': (context) => OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
         '/registration': (context) => const RegistrationScreen(),
         '/home_screen': (context) => MyHomePage(),
+        '/user_preferences': (context) => const UserPreferences(),
       },
     );
   }
