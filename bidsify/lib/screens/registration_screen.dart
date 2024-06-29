@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/services/auth_service.dart';
+import 'package:notes/services/data_service.dart';
 import 'package:notes/widgets/toast.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +18,7 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  late DataService _dataService;
   bool checkBoxState = false;
   String? _name, _email, _password, _confirmPassword;
   final GetIt getIt = GetIt.instance;
@@ -27,6 +28,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void initState() {
     super.initState();
     _authService = getIt.get<AuthService>();
+    _dataService = getIt.get<DataService>();
     fToast = FToast();
     fToast.init(context);
   }
