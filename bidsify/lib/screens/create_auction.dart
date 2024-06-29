@@ -41,14 +41,11 @@ class _AuctionPageState extends State<AuctionPage> {
       //   _image = null;
       // });
 
-      Navigator.popAndPushNamed(
-        context, '/create_auction_page',
-        arguments: {
-          'title': title,
-          'description': description,
-          'image': _image
-        }
-      );
+      Navigator.pop(context, {
+        'title': title,
+        'description': description,
+        'image': _image,
+      });
     }
   }
 
