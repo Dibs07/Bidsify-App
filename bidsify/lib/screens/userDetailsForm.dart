@@ -6,7 +6,7 @@ import 'package:notes/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class UserDetailsScreen extends StatefulWidget {
-  static const String id = 'registration_screen';
+  static const String id = 'userDetails_screen';
   const UserDetailsScreen({super.key});
 
   @override
@@ -15,9 +15,10 @@ class UserDetailsScreen extends StatefulWidget {
 
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   bool checkBoxState = false;
-  String? _name, _email, _password, _confirmPassword;
+  int? _phoneNo, _pincode;
+  String? _location;
   final GetIt getIt = GetIt.instance;
   late AuthService _authService;
   @override
@@ -25,193 +26,113 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     super.initState();
     _authService = getIt.get<AuthService>();
   }
-   
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimateGradient(
-          primaryBeginGeometry: const AlignmentDirectional(0, 1),
-          primaryEndGeometry: const AlignmentDirectional(0, 2),
-          secondaryBeginGeometry: const AlignmentDirectional(2, 0),
-          secondaryEndGeometry: const AlignmentDirectional(0, -0.8),
-          textDirectionForGeometry: TextDirection.rtl,
-          primaryColors: kPrimaryGradientColors,
-          secondaryColors: kSecondaryGradientColors,
-          child: SizedBox(
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text('Sign Up',
-                          style: kHeadingTextStyle.copyWith(
-                            fontSize: 55
-                          ),
-                        ),
-                      ),
-                   const SizedBox(height: 20),
-                  
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: TextFormField(
-                          validator: (val) => val!.length<6 ? 'Enter a valid name' : null,
-                          onSaved: (val) => _name = val!,
-                          style: kInputTextFieldStyle,
-                          decoration: kTextFieldDecoration.copyWith(
-                            hintText: 'Enter your username',
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) {
-                            // email = value;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                  
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: TextFormField(
-                          validator: (val) => val!.isEmpty ? 'Enter a valid email' : null,
-                          onSaved: (val) => _email = val!,
-                          style: kInputTextFieldStyle,
-                          decoration: kTextFieldDecoration.copyWith(
-                            hintText: 'Enter your email',
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) {
-                            // email = value;
-                          },
-                        ),
-                      ),
-                  
-                      const SizedBox(height: 20),
-                  
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: TextFormField(
-                          validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
-                          onSaved: (val) => _password = val!,
-                          style: kInputTextFieldStyle,
-                          decoration: kTextFieldDecoration.copyWith(
-                            hintText: 'Enter your password',
-                          ),
-                          obscureText: true,
-                          onChanged: (value) {
-                            // email = value;
-                          },
-                        ),
-                      ),
-                  
-                      const SizedBox(height: 20),
-                  
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: TextFormField(
-                          validator: (val) => val!.length<6? 'Password should match' : null,
-                          onSaved: (val) => _confirmPassword = val!,
-                          style: kInputTextFieldStyle,
-                          decoration: kTextFieldDecoration.copyWith(
-                            hintText: 'Confirm password',
-                          ),
-                          obscureText: true,
-                          onChanged: (value) {
-                            // email = value;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        primaryBeginGeometry: const AlignmentDirectional(0, 1),
+        primaryEndGeometry: const AlignmentDirectional(0, 2),
+        secondaryBeginGeometry: const AlignmentDirectional(2, 0),
+        secondaryEndGeometry: const AlignmentDirectional(0, -0.8),
+        textDirectionForGeometry: TextDirection.rtl,
+        primaryColors: kPrimaryGradientColors,
+        secondaryColors: kSecondaryGradientColors,
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FittedBox(
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 2),
-                          Checkbox(value: checkBoxState, onChanged: (value) {
-                            setState(() {
-                              checkBoxState = !checkBoxState;
-                            });
-                          }),
-
-                          const Text('Remember Me',
-                            style: TextStyle(
-                              color: Colors.white
-                            ),
-                          )
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Additional Details',
+                        style: kHeadingTextStyle.copyWith(fontSize: 55),
                       ),
-                    ), 
+                    ),
+                    CircleAvatar(
+                       radius: MediaQuery.sizeOf(context).width * 0.15,
+                       backgroundImage: AssetImage("assets/default-profile.png"),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextFormField(
+                        validator: (val) =>
+                            val!.length > 10 ? 'Enter a valid mobile no' : null,
+                        onSaved: (val) => _phoneNo = int.parse(val!),
+                        style: kInputTextFieldStyle,
+                        decoration: kTextFieldDecoration.copyWith(
+                          hintText: 'Enter your mobile no',
+                        ),
+                        keyboardType: TextInputType.phone,
+                        onChanged: (value) {
+                          // email = value;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextFormField(
+                        validator: (val) =>
+                            val!.isEmpty ? 'Enter a valid location' : null,
+                        onSaved: (val) => _location = val!,
+                        style: kInputTextFieldStyle,
+                        decoration: kTextFieldDecoration.copyWith(
+                          hintText: 'Enter your location',
+                        ),
+                        keyboardType: TextInputType.multiline,
+                        onChanged: (value) {
+                          // email = value;
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: TextFormField(
+                        validator: (val) =>
+                            val!.length != 6 ? 'Enter a valid pincode' : null,
+                        onSaved: (val) => _pincode = int.parse(val!),
+                        style: kInputTextFieldStyle,
+                        decoration: kTextFieldDecoration.copyWith(
+                          hintText: 'Enter your pincode',
+                        ),
+                        obscureText: true,
+                        onChanged: (value) {
+                          // email = value;
+                        },
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: myButton(height: 50, width: double.infinity, text: 'Continue', onClick: _signUp),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: myButton(
+                  height: 50,
+                  width: double.infinity,
+                  text: 'Continue',
+                  onClick: () {},
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Already have an account?',
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          
-                         Navigator.popAndPushNamed(context, '/login');
-                        },
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            color: kSecondaryColor
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ) 
-              ],
-            ),
-          )),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
- 
-_signUp() async {
-    final form = _formKey.currentState;
-    if (form!.validate()) {
-      form.save();
-      if(_password != _confirmPassword) {
-        print("Password does not match");
-        return;
-      }
-      bool res = await _authService.register(_email!, _password!);
-      if (res) {
-        Navigator.popAndPushNamed(context, '/user_preferences');
-      } else {
-        print("Failed");
-      }
-    } else {
-      print("Invalid");
-    }
-  }
+
   //   _createAccount() {
   //   var contractLinking = Provider.of<ContractLinking>(context, listen: false);
   //   contractLinking.createAccount(_name, _password, _email);
   // }
 }
-
-
