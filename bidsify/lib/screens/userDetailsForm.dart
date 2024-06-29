@@ -13,7 +13,6 @@ class UserDetailsScreen extends StatefulWidget {
   State<UserDetailsScreen> createState() => _UserDetailsScreenState();
 }
 
-
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
 
@@ -56,6 +55,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                         'Additional Details',
                         style: kHeadingTextStyle.copyWith(fontSize: 55),
                       ),
+                    ),
+                    CircleAvatar(
+                       radius: MediaQuery.sizeOf(context).width * 0.15,
+                       backgroundImage: AssetImage("assets/default-profile.png"),
                     ),
                     const SizedBox(height: 20),
                     Padding(
