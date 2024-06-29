@@ -18,7 +18,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   
   bool checkBoxState = false;
-  String? _name, _email, _password;
+  String? _name, _email, _password, _confirmPassword;
   final GetIt getIt = GetIt.instance;
   late AuthService _authService;
   @override
@@ -116,7 +116,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TextFormField(
-
+                          validator: (val) => val!.length<6? 'Password should match' : null,
+                          onSaved: (val) => _confirmPassword = val!,
                           style: kInputTextFieldStyle,
                           decoration: kTextFieldDecoration.copyWith(
                             hintText: 'Confirm password',
@@ -194,7 +195,10 @@ _signUp() async {
     final form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
-      print("Username: $_name , Email: $_email , Password: $_password");
+      if(_password != _confirmPassword) {
+        print("Password does not match");
+        return;
+      }
       bool res = await _authService.register(_email!, _password!);
       if (res) {
         Navigator.popAndPushNamed(context, '/home_screen');
