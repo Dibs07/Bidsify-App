@@ -157,7 +157,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 const SizedBox(height: 20),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: myButton(height: 50, width: double.infinity, text: 'Continue',onClick: _signUp),
+                  child: myButton(height: 50, width: double.infinity, text: 'Continue',onClick: _signUp()),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
