@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,6 +12,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late AuthService _authService;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = GetIt.instance.get<AuthService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-
           Expanded(
             flex: 1,
             child: Align(
@@ -25,17 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
                 child: Text(
-                  'Welcome, username',
+                  'Welcome,Pratyush',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold
-                  ),
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ),
           ),
-
           Expanded(
             flex: 3,
             child: Center(
