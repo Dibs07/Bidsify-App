@@ -46,6 +46,7 @@ dependencies:
   firebase_core: ^3.1.1
   flutter_riverpod: ^2.5.1
   fluttertoast: ^8.2.6
+  neon_widgets: ^2.0.0
   
 
 dev_dependencies:
@@ -72,7 +73,6 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - src/artifacts/Auth.json
     - assets/
   #   - images/a_dot_ham.jpeg
 
