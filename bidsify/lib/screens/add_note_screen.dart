@@ -4,8 +4,13 @@ import 'dart:io';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/model/item_model.dart';
+import 'package:notes/services/auth_service.dart';
+import 'package:notes/services/bid_service.dart';
+import 'package:notes/services/storage_service.dart';
 import 'package:notes/widgets/auction_card.dart';
 
 class AddNoteScreen extends StatefulWidget {
@@ -18,15 +23,19 @@ class AddNoteScreen extends StatefulWidget {
 class _AddNoteScreenState extends State<AddNoteScreen> {
   int _selectedIndex = 0;
 
+  late BidService _bidService;
+  late StorageService _storageService;
+  late AuthService _authService;
+  @override
+  void initState() {
+    super.initState();
+    _bidService = GetIt.instance.get<BidService>();
+    _storageService = GetIt.instance.get<StorageService>();
+    _authService = GetIt.instance.get<AuthService>();
+  }
 
-
-
-
-
-
-
-      final _formKey = GlobalKey<FormState>();
-      final TextEditingController _bidController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _bidController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   File? _imageFile;
@@ -34,39 +43,46 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(StateSetter setState) async {
-  setState(() {
-    _isLoading = true;
-  });
-  final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-  if (pickedFile != null) {
     setState(() {
-      _imageFile = File(pickedFile.path);
-      _isLoading = false;
+      _isLoading = true;
     });
-  } else {
-    setState(() {
-      _isLoading = false;
-    });
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
-}
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text;
       final description = _descriptionController.text;
       final bid = _bidController.text;
-      // Process the extracted values
-      print('Title: $title');
-      print('Description: $description');
-      print('Image: ${_imageFile?.path ?? 'No image selected'}');
-      // You can also use the extracted values to update the UI or navigate to another page
+      String? url = await _storageService.uploadFile(
+        file: _imageFile!,
+        uid: _authService.user!.uid,
+      );
+      if (url != null) {
+        await _bidService.createitem(
+          item: ItemModel(
+            uid: _authService.user!.uid + DateTime.now().toString(),
+            name: title,
+            descrription: description,
+            ownerId: _authService.user!.uid,
+            price: double.parse(bid),
+            bids: [],
+            itemPic: url,
+          ),
+        );
+      }
     }
   }
-
-
-
-
-
 
   static List<Widget> _widgetOptions = <Widget>[
     Text(
@@ -224,10 +240,9 @@ _onBidPlaced() {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: Text('Place your Bid Here',
-                style: kHeadingTextStyle.copyWith(
-                  fontSize: 35
-                ),
+              title: Text(
+                'Place your Bid Here',
+                style: kHeadingTextStyle.copyWith(fontSize: 35),
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
@@ -236,7 +251,6 @@ _onBidPlaced() {
                 height: 130,
                 child: Column(
                   children: [
-                    
                     TextField(
                       keyboardType: TextInputType.number,
                       onChanged: (value) {

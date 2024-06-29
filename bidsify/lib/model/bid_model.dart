@@ -6,7 +6,7 @@ class BidModel {
   final double maxBid;
   final bool isEnded;
   final String lastBidder;
-  final ItemModel item;
+  final String item;
   final String state;
 
   BidModel({
@@ -27,7 +27,7 @@ class BidModel {
       'maxBid': maxBid,
       'isEnded': isEnded,
       'lastBidder': lastBidder,
-      'item': item.toMap(),
+      'item': item,
       'state': state,
     };
   }
@@ -39,7 +39,7 @@ class BidModel {
       maxBid: map['maxBid'] ?? '',
       isEnded: map['isEnded'] ?? false,
       lastBidder: map['lastBidder'] ?? '',
-      item: ItemModel.fromMap(map['item']),
+      item: map['item'] ?? '',
       state: map['state'] ?? 'pending',
     );
   }

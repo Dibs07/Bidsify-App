@@ -6,7 +6,7 @@ class ItemModel {
   final String descrription;
   final String ownerId;
   final String? itemPic;
-  final double? price;
+  final double price;
   final List<BidModel> bids;
 
   ItemModel({

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/model/user_model.dart';
 
 class BidCard extends StatelessWidget {
   final String title;
@@ -53,7 +54,7 @@ class BidCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  '${bidder.toString()}',
+                  '${ownerid}',
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 16,

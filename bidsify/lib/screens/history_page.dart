@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:notes/model/item_model.dart';
+import 'package:notes/services/auth_service.dart';
+import 'package:notes/services/bid_service.dart';
 import 'package:notes/widgets/auction_card.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -9,7 +14,17 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  late BidService _bidService;
+  late AuthService _authService;
   VoidCallback onClick = () => {};
+
+  @override
+  void initState() {
+    super.initState();
+    _bidService = GetIt.instance.get<BidService>();
+    _authService = GetIt.instance.get<AuthService>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
