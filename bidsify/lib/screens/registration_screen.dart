@@ -66,6 +66,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
+  bool obscureBool = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,8 +143,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           style: kInputTextFieldStyle,
                           decoration: kTextFieldDecoration.copyWith(
                             hintText: 'Enter your password',
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                obscureBool ? Icons.visibility : Icons.visibility_off,
+                              ),
+                              onPressed: () => setState(() {
+                                obscureBool = !obscureBool;
+                              })
+                            ),
+                            border: OutlineInputBorder(),
                           ),
-                          obscureText: true,
+                          obscureText: obscureBool,
                           onChanged: (value) {
                             // email = value;
                           },
