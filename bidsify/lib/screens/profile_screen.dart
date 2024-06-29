@@ -51,5 +51,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
   logout() async {
     await _authService.logout();
+    Navigator.pushNamed(context, '/login');
   }
 }
