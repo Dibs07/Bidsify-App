@@ -9,12 +9,12 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  Function onClick = () => {};
+  VoidCallback onClick = () => {};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 50, 10, 15),
+        padding: const EdgeInsets.fromLTRB(0, 50, 0, 15),
         child: Column(
           children: [
             Padding(

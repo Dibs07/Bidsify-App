@@ -6,7 +6,7 @@ class AuctionCard extends StatelessWidget {
   final Map<String, String> bidder;
   final double initialBid;
   final double currentBid;
-  final Function onClick;
+  final VoidCallback onClick;
   final String? transactionId;
   const AuctionCard({
     super.key,
@@ -109,6 +109,7 @@ class AuctionCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                      SizedBox(width: 24),
                       myButton(
                         height: 50,
                         width: 120,

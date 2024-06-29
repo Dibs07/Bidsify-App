@@ -33,7 +33,108 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     });
   }
 
-  void onClick() {}
+  onClick() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Add Auction Details',
+                style: kHeadingTextStyle.copyWith(
+                  fontSize: 35
+                ),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              content: SizedBox(
+                height: 210,
+                child: Column(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextFormField(
+                          // validator: (val) => val!.length<6 ? 'Enter a valid name' : null,
+                          // onSaved: (val) => _name = val!,
+                          style: kInputTextFieldStyle,
+                          decoration: kTextFieldDecoration.copyWith(
+                            hintText: 'Title',
+                          ),
+                          keyboardType: TextInputType.name,
+                          onChanged: (value) {
+                            // name = value;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                    
+                        TextFormField(
+                          // validator: (val) => val!.isEmpty ? 'Enter a valid email' : null,
+                          // onSaved: (val) => _email = val!,
+                          style: kInputTextFieldStyle,
+                          decoration: kTextFieldDecoration.copyWith(
+                            hintText: 'Enter Initial Bid',
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) {
+                            // email = value;
+                          },
+                        ),
+                    
+                        // --------------ImagePicker Here----------------
+
+                        // const SizedBox(height: 20),
+                    
+                        // TextFormField(
+                        //   // validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
+                        //   // onSaved: (val) => _password = val!,
+                        //   style: kInputTextFieldStyle,
+                        //   decoration: kTextFieldDecoration.copyWith(
+                        //     hintText: 'Enter your password',
+                        //   ),
+                        //   obscureText: true,
+                        //   onChanged: (value) {
+                        //     // email = value;
+                        //   },
+                        // ),
+                    
+                        // const SizedBox(height: 20),
+                    
+                        // TextFormField(
+                        
+                        //   style: kInputTextFieldStyle,
+                        //   decoration: kTextFieldDecoration.copyWith(
+                        //     hintText: 'Confirm password',
+                        //   ),
+                        //   obscureText: true,
+                        //   onChanged: (value) {
+                        //     // email = value;
+                        //   },
+                        // ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    myButton(width: double.infinity, height: 50, text: 'Save', onClick: (){})
+
+                  ],
+                ),
+              ),
+              // actions: [
+              //   TextButton(
+              //     child: Text('Close'),
+              //     onPressed: () {
+              //       Navigator.of(context).pop();
+              //     },
+              //   ),
+              // ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +166,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               bidder: {"Sayan": ""},
               initialBid: 0.0,
               currentBid: 10.2,
-              onClick: onClick,
+              onClick: onClick
             ),
           ),
         ],

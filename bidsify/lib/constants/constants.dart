@@ -35,9 +35,9 @@ class myButton extends StatelessWidget {
   final double height;
   final double width;
   final String text;
-  final Function? onClick;
+  final VoidCallback onClick;
 
-  const myButton({super.key, required this.width, required this.height, required this.text, this.onClick});
+  const myButton({super.key, required this.width, required this.height, required this.text, required this.onClick});
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +45,7 @@ class myButton extends StatelessWidget {
       width: width,
       height: height,
       child: ElevatedButton(
-        onPressed: () {
-          onClick ?? () {};
-        },
+        onPressed: onClick,
         style: ElevatedButton.styleFrom(    
           padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
           backgroundColor: kSecondaryColor,
