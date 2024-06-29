@@ -3,14 +3,14 @@ class ItemModel {
   final String name;
   final String descrription;
   final String ownerId;
-  final String itemPic;
+  final String? itemPic;
 
   ItemModel({
     required this.uid,
     required this.name,
     required this.descrription,
     required this.ownerId,
-    required this.itemPic,
+    this.itemPic,
   });
 
   Map<String, dynamic> toMap() {
