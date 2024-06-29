@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/model/user_model.dart';
 
 class BidCard extends StatelessWidget {
   final String title;
-  final Map<String, String> bidder;
-  final double initialBid;
+  final String ownerid;
+  final String pfp;
   final double currentBid;
   final VoidCallback onClick;
   final String? transactionId;
   const BidCard({
     super.key,
     required this.title,
-    required this.bidder,
-    required this.initialBid,
+    required this.ownerid,
+    required this.pfp,
     required this.currentBid,
     required this.onClick,
     this.transactionId,
@@ -53,7 +54,7 @@ class BidCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  '${bidder.toString()}',
+                  '${ownerid}',
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -68,7 +69,7 @@ class BidCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                     child: Text(
-                      'Initial Bid: $initialBid',
+                      'Initial Bid: $currentBid',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,

@@ -4,8 +4,13 @@ import 'dart:io';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/model/item_model.dart';
+import 'package:notes/services/auth_service.dart';
+import 'package:notes/services/bid_service.dart';
+import 'package:notes/services/storage_service.dart';
 import 'package:notes/widgets/auction_card.dart';
 
 class AddNoteScreen extends StatefulWidget {
@@ -18,10 +23,19 @@ class AddNoteScreen extends StatefulWidget {
 class _AddNoteScreenState extends State<AddNoteScreen> {
   int _selectedIndex = 0;
 
+  late BidService _bidService;
+  late StorageService _storageService;
+  late AuthService _authService;
+  @override
+  void initState() {
+    super.initState();
+    _bidService = GetIt.instance.get<BidService>();
+    _storageService = GetIt.instance.get<StorageService>();
+    _authService = GetIt.instance.get<AuthService>();
+  }
 
-
-      final _formKey = GlobalKey<FormState>();
-      final TextEditingController _bidController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _bidController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   File? _imageFile;
@@ -29,35 +43,46 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage(StateSetter setState) async {
-  setState(() {
-    _isLoading = true;
-  });
-  final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-  if (pickedFile != null) {
     setState(() {
-      _imageFile = File(pickedFile.path);
-      _isLoading = false;
+      _isLoading = true;
     });
-  } else {
-    setState(() {
-      _isLoading = false;
-    });
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
-}
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final title = _titleController.text;
       final description = _descriptionController.text;
       final bid = _bidController.text;
-      // Process the extracted values
-      print('Title: $title');
-      print('Description: $description');
-      print('Image: ${_imageFile?.path ?? 'No image selected'}');
-      // You can also use the extracted values to update the UI or navigate to another page
+      String? url = await _storageService.uploadFile(
+        file: _imageFile!,
+        uid: _authService.user!.uid,
+      );
+      if (url != null) {
+        await _bidService.createitem(
+          item: ItemModel(
+            uid: _authService.user!.uid + DateTime.now().toString(),
+            name: title,
+            descrription: description,
+            ownerId: _authService.user!.uid,
+            price: double.parse(bid),
+            bids: [],
+            itemPic: url,
+          ),
+        );
+      }
     }
   }
-
 
   static List<Widget> _widgetOptions = <Widget>[
     Text(
@@ -83,116 +108,119 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   }
 
   Future<void> onClick(BuildContext context) async {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Add Bid Details',
-                        style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      const SizedBox(height: 20),
-                      _isLoading
-                          ? Center(child: CircularProgressIndicator())
-                          : _imageFile == null
-                              ? Center(
-                                  child: Text(
-                                    'No image selected.',
-                                    style: TextStyle(color: Colors.grey),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Add Bid Details',
+                          style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        const SizedBox(height: 20),
+                        _isLoading
+                            ? Center(child: CircularProgressIndicator())
+                            : _imageFile == null
+                                ? Center(
+                                    child: Text(
+                                      'No image selected.',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  )
+                                : Center(
+                                    child: SizedBox(
+                                      height: 80,
+                                      child: Image.file(_imageFile!),
+                                    ),
                                   ),
-                                )
-                              : Center(
-                                  child: SizedBox(
-                                    height: 80,
-                                    child: Image.file(_imageFile!),
-                                  ),
-                                ),
-                      ElevatedButton(
-                        onPressed: () => _pickImage(setState),
-                        child: Text('Pick Image'),
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        style: TextStyle(fontSize: 16),
-                        decoration: InputDecoration(
-                          hintText: 'Title',
-                          border: OutlineInputBorder(),
+                        ElevatedButton(
+                          onPressed: () => _pickImage(setState),
+                          child: Text('Pick Image'),
                         ),
-                        keyboardType: TextInputType.name,
-                        controller: _titleController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a title';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        style: TextStyle(fontSize: 16),
-                        decoration: InputDecoration(
-                          hintText: 'Description',
-                          border: OutlineInputBorder(),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          style: TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            hintText: 'Title',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.name,
+                          controller: _titleController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title';
+                            }
+                            return null;
+                          },
                         ),
-                        keyboardType: TextInputType.text,
-                        controller: _descriptionController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a description';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        style: TextStyle(fontSize: 16),
-                        decoration: InputDecoration(
-                          hintText: 'Enter Initial Bid',
-                          border: OutlineInputBorder(),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          style: TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            hintText: 'Description',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.text,
+                          controller: _descriptionController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a description';
+                            }
+                            return null;
+                          },
                         ),
-                        keyboardType: TextInputType.number,
-                        controller: _bidController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please place a bid';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _submitForm();
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child: Text('Save'),
-                      ),
-                    ],
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          style: TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            hintText: 'Enter Initial Bid',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          controller: _bidController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please place a bid';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _submitForm();
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          child: Text('Save'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+            );
+          },
+        );
+      },
+    );
+  }
 
   placeBid() {
     showDialog(
@@ -201,10 +229,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: Text('Place your Bid Here',
-                style: kHeadingTextStyle.copyWith(
-                  fontSize: 35
-                ),
+              title: Text(
+                'Place your Bid Here',
+                style: kHeadingTextStyle.copyWith(fontSize: 35),
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
@@ -213,13 +240,15 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 height: 130,
                 child: Column(
                   children: [
-                    
                     TextField(
                       keyboardType: TextInputType.number,
                     ),
                     SizedBox(height: 20),
-                    myButton(width: double.infinity, height: 50, text: 'Save', onClick: (){})
-
+                    myButton(
+                        width: double.infinity,
+                        height: 50,
+                        text: 'Save',
+                        onClick: () {})
                   ],
                 ),
               ),
@@ -265,27 +294,17 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: BidCard(
-              title: 'Here Goes Auction 1',
-              bidder: {"Sayan": ""},
-              initialBid: 0.0,
-              currentBid: 10.2,
-              onClick: placeBid
-            ),
-          ),
-          SizedBox(height: 25),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: BidCard(
-              title: 'Here Goes Auction 1',
-              bidder: {"Sayan": ""},
-              initialBid: 0.0,
-              currentBid: 10.2,
-              onClick: placeBid
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+          //   child: BidCard(
+          //       title: 'Here Goes Auction 1',
+          //       bidder: {"Sayan": ""},
+          //       pfp: 'assets/images/pfp.png',
+          //       currentBid: 10.2,
+          //       onClick: placeBid),
+          // ),
+          // SizedBox(height: 25),
+          
         ],
       ),
     );
