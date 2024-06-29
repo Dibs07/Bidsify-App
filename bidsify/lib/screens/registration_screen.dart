@@ -2,7 +2,6 @@ import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
-import 'package:notes/contract_link/contract_linking.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
