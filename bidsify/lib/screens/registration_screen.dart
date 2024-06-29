@@ -1,7 +1,9 @@
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/contract_link/contract_linking.dart';
+import 'package:notes/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -14,11 +16,17 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  
   bool checkBoxState = false;
-  late String _name, _email, _password;
-
+  String? _name, _email, _password;
+  final GetIt getIt = GetIt.instance;
+  late AuthService _authService;
   @override
+  void initState() {
+    super.initState();
+    _authService = getIt.get<AuthService>();
+  }
+   
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimateGradient(
@@ -33,6 +41,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             width: double.infinity,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Form(
                   key: _formKey,
@@ -146,9 +155,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: myButton(height: 50, width: double.infinity, text: 'Continue'),
+                  child: myButton(height: 50, width: double.infinity, text: 'Continue',onClick: _signUp),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -162,8 +171,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          _signUp();
-                         // Navigator.popAndPushNamed(context, '/login');
+                          
+                         Navigator.popAndPushNamed(context, '/login');
                         },
                         child: const Text(
                           'Login',
@@ -180,21 +189,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           )),
     );
   }
-  _signUp() {
+ 
+_signUp() async {
     final form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
       print("Username: $_name , Email: $_email , Password: $_password");
-      _createAccount();
+      bool res = await _authService.register(_email!, _password!);
+      if (res) {
+        Navigator.popAndPushNamed(context, '/home_screen');
+      } else {
+        print("Failed");
+      }
     } else {
       print("Invalid");
     }
   }
-
-    _createAccount() {
-    var contractLinking = Provider.of<ContractLinking>(context, listen: false);
-    contractLinking.createAccount(_name, _password, _email);
-  }
+  //   _createAccount() {
+  //   var contractLinking = Provider.of<ContractLinking>(context, listen: false);
+  //   contractLinking.createAccount(_name, _password, _email);
+  // }
 }
 
 

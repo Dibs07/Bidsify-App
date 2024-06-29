@@ -1,19 +1,28 @@
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
   const LoginScreen({super.key});
-
+  
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  bool checkBoxState = false;
 
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  bool checkBoxState = false;
+late AuthService _authService;
+  String? email, password;
   @override
+  void initState() {
+    super.initState();
+    _authService = GetIt.instance.get<AuthService>();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimateGradient(
@@ -29,52 +38,73 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text('Login',
-                        style: kHeadingTextStyle.copyWith(
-                          fontSize: 55
+              Form(
+                key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text('Login',
+                          style: kHeadingTextStyle.copyWith(
+                            fontSize: 55
+                          ),
                         ),
                       ),
-                    ),
-                
-                    const SizedBox(height: 20),
-                
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        style: kInputTextFieldStyle,
-                        decoration: kTextFieldDecoration.copyWith(
-                          hintText: 'Enter your email',
+                  
+                      const SizedBox(height: 20),
+                  
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            email = value;
+                          },
+                          style: kInputTextFieldStyle,
+                          decoration: kTextFieldDecoration.copyWith(
+                            hintText: 'Enter your email',
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (value) {
+                            // email = value;
+                          },
                         ),
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (value) {
-                          // email = value;
-                        },
                       ),
-                    ),
-                
-                    const SizedBox(height: 20),
-                
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        style: kInputTextFieldStyle,
-                        decoration: kTextFieldDecoration.copyWith(
-                          hintText: 'Enter your password',
+                  
+                      const SizedBox(height: 20),
+                  
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value == null || value.length<6) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            password = value;
+                          },
+                          style: kInputTextFieldStyle,
+                          decoration: kTextFieldDecoration.copyWith(
+                            hintText: 'Enter your password',
+                          ),
+                          obscureText: true,
+                          onChanged: (value) {
+                            // email = value;
+                          },
                         ),
-                        obscureText: true,
-                        onChanged: (value) {
-                          // email = value;
-                        },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -110,9 +140,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Padding(
+                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: myButton(height: 50, width: double.infinity, text: 'Continue'),
+                  child: myButton(height: 50, width: double.infinity, text: 'Continue',onClick: _login),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -142,5 +172,19 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           )),
     );
+  }
+  _login() async {
+    final form = _formKey.currentState;
+    if (form!.validate()) {
+      form.save();
+      bool res = await _authService.login(email!, password!);
+      if (res) {
+        Navigator.popAndPushNamed(context, '/home_screen');
+      } else {
+        print("Failed");
+      }
+    } else {
+      print("Invalid");
+    }
   }
 }
