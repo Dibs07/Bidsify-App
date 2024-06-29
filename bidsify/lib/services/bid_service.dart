@@ -14,13 +14,13 @@ class BidService {
           fromFirestore: (snapshots, _) => ItemModel.fromMap(
             snapshots.data()!,
           ),
-          toFirestore: (userProfile, _) => userProfile.toMap(),
+          toFirestore: (item, _) => item.toMap(),
         );
-    bids = _db.collection('chats').withConverter<BidModel>(
+    bids = _db.collection('bids').withConverter<BidModel>(
           fromFirestore: (snapshots, _) => BidModel.fromMap(
             snapshots.data()!,
           ),
-          toFirestore: (chat, _) => chat.toMap(),
+          toFirestore: (bid, _) => bid.toMap(),
         );
   }
 
@@ -51,11 +51,22 @@ class BidService {
   }
 
   Stream<List<BidModel>> getallBids() {
-    return bids!.where('ownerId',isNotEqualTo: _authService.user!.uid).snapshots()
+    return bids!
+        .where('ownerId', isNotEqualTo: _authService.user!.uid)
+        .snapshots() as Stream<List<BidModel>>;
+  }
+
+  Stream<List<BidModel>> getBidsbyownerID() {
+    return bids!.where('ownerId', isEqualTo: _authService.user!.uid).snapshots()
         as Stream<List<BidModel>>;
   }
-  Stream<List<BidModel>> getBidsbyownerID() {
-    return bids!.where('ownerId',isEqualTo: _authService.user!.uid).snapshots()
-        as Stream<List<BidModel>>;
+
+  Future<void> updateBid(
+      {required String bidId, required double bidValue}) async {
+    try {
+      await bids!.doc(bidId).update({'maxBid': bidValue});
+    } catch (e) {
+      print(e);
+    }
   }
 }
