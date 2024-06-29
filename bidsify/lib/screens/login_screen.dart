@@ -140,9 +140,9 @@ late AuthService _authService;
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: myButton(height: 50, width: double.infinity, text: 'Continue'),
+                  child: myButton(height: 50, width: double.infinity, text: 'Continue', onClick: (){}),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
