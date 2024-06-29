@@ -197,7 +197,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       height: 50,
                       width: double.infinity,
                       text: 'Continue',
-                      onClick: _signUp),
+                      onClick: () {
+                        Navigator.popAndPushNamed(context, '/user_details');
+                      }),
                 ),
                 Padding(
                     padding: const EdgeInsets.all(20.0),
