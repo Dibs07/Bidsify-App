@@ -14,7 +14,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _authService = GetIt.instance.();
+    _authService = GetIt.instance.get<AuthService>();
   }
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // style: ButtonStyle(
                 //   backgroundColor:  Colors.black,
                 // ),
-                onPressed: () {},
+                onPressed: logout(),
                 child: Text('Logout',
                   style: TextStyle(
                     fontWeight: FontWeight.w900,
@@ -48,5 +48,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+  logout() async {
+    await _authService.logout();
   }
 }
