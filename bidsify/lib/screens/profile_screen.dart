@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:notes/services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -8,7 +10,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  late AuthService _authService;
   @override
+  void initState() {
+    super.initState();
+    _authService = GetIt.instance.();
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
