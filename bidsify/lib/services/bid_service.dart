@@ -1,12 +1,10 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/model/bid_model.dart';
 import 'package:notes/model/item_model.dart';
 import 'package:notes/services/auth_service.dart';
 
-class BidService{
+class BidService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   late AuthService _authService;
   CollectionReference? items;
@@ -26,7 +24,7 @@ class BidService{
         );
   }
 
-  BidService(){
+  BidService() {
     setUp();
     _authService = GetIt.instance.get<AuthService>();
   }
@@ -44,5 +42,20 @@ class BidService{
     } catch (e) {
       print(e);
     }
+  }
+
+  Stream<QuerySnapshot<ItemModel>> getItemsbyownerid(
+      {required String ownerId}) {
+    return items!.where('ownerId', isEqualTo: ownerId).snapshots()
+        as Stream<QuerySnapshot<ItemModel>>;
+  }
+
+  Stream<List<BidModel>> getallBids() {
+    return bids!.where('ownerId',isNotEqualTo: _authService.user!.uid).snapshots()
+        as Stream<List<BidModel>>;
+  }
+  Stream<List<BidModel>> getBidsbyownerID() {
+    return bids!.where('ownerId',isEqualTo: _authService.user!.uid).snapshots()
+        as Stream<List<BidModel>>;
   }
 }
