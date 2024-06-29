@@ -67,6 +67,8 @@ class _MyAppState extends State<MyApp> {
         '/registration': (context) => const RegistrationScreen(),
         '/home_screen': (context) => MyHomePage(),
         '/user_preferences': (context) => const UserPreferences(),
+        '/add_auction_page': (context) => AuctionPage(),
+        '/create_auction_page': (context) => CreateAuctionPage()
       },
     );
   }
