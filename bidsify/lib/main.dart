@@ -9,6 +9,7 @@ import 'package:notes/screens/registration_screen.dart';
 import 'package:notes/screens/onboarding_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:notes/screens/user_preferences.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/utils.dart';
 import 'firebase_options.dart';
@@ -57,6 +58,7 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const LoginScreen(),
         '/registration': (context) => const RegistrationScreen(),
         '/home_screen': (context) => MyHomePage(),
+        '/user_preferences': (context) => const UserPreferences(),
       },
     );
   }

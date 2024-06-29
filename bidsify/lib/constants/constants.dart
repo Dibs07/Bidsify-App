@@ -115,7 +115,7 @@ class SmallButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.fromLTRB(13, 0, 0, 0),
       child: TextButton(
         onPressed: () {},
         child: const Text(

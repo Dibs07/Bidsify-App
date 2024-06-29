@@ -201,7 +201,7 @@ _signUp() async {
       }
       bool res = await _authService.register(_email!, _password!);
       if (res) {
-        Navigator.popAndPushNamed(context, '/home_screen');
+        Navigator.popAndPushNamed(context, '/user_preferences');
       } else {
         print("Failed");
       }

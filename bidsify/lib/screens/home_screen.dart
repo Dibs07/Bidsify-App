@@ -6,6 +6,7 @@ import 'package:notes/screens/add_note_screen.dart';
 import 'package:notes/screens/history_page.dart';
 import 'package:notes/screens/main_screen.dart';
 import 'package:notes/screens/profile_screen.dart';
+import 'package:notes/screens/user_preferences.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -19,7 +20,8 @@ class _MyHomePageState extends State<MyHomePage> {
     HomeScreen(),
     AddNoteScreen(),
     HistoryScreen(),
-   ProfileScreen(),
+  //  ProfileScreen(),
+  UserPreferences(),
   ];
 
   void _onItemTapped(int index) {
