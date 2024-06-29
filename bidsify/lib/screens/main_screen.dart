@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: Text(
-                        "Balance: ",
+                        "Buy ",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
