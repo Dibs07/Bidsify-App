@@ -22,7 +22,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 child: BidCard(
                   title: 'Here Goes Auction 1',
                   bidder: {"name": "Sayan"},
-                  initialBid: 0.0,
+                  latestBid: 0.0,
                   currentBid: 10.0,
                   onClick: onClick,
                   transactionId: "15688446511555555555555555555555555555551846318546846",

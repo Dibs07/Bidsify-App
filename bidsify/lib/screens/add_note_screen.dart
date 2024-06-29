@@ -203,6 +203,20 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   );
 }
 
+var newBid;
+
+
+
+
+
+_onBidPlaced() {
+  if (newBid != null) {
+    // do
+  }
+}
+
+
+
   placeBid() {
     showDialog(
       context: context,
@@ -225,9 +239,13 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                     
                     TextField(
                       keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        newBid = value;
+                      },
+                      
                     ),
                     SizedBox(height: 20),
-                    myButton(width: double.infinity, height: 50, text: 'Save', onClick: (){})
+                    myButton(width: double.infinity, height: 50, text: 'Save', onClick: _onBidPlaced)
 
                   ],
                 ),
@@ -274,27 +292,44 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               ],
             ),
           ),
+          
+          
+          
+          
+          
+          
+          
+          
+          
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: BidCard(
               title: 'Here Goes Auction 1',
               bidder: {"Sayan": ""},
-              initialBid: 0.0,
+              latestBid: 0.0,
               currentBid: 10.2,
               onClick: placeBid
             ),
           ),
+          
+          
+          
           SizedBox(height: 25),
+          
+          
+          
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: BidCard(
               title: 'Here Goes Auction 1',
               bidder: {"Sayan": ""},
-              initialBid: 0.0,
+              latestBid: 0.0,
               currentBid: 10.2,
               onClick: placeBid
             ),
           ),
+
+
         ],
       ),
     );

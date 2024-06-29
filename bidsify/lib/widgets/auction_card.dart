@@ -4,7 +4,7 @@ import 'package:notes/constants/constants.dart';
 class BidCard extends StatelessWidget {
   final String title;
   final Map<String, String> bidder;
-  final double initialBid;
+  final double latestBid;
   final double currentBid;
   final VoidCallback onClick;
   final String? transactionId;
@@ -12,7 +12,7 @@ class BidCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.bidder,
-    required this.initialBid,
+    required this.latestBid,
     required this.currentBid,
     required this.onClick,
     this.transactionId,
@@ -68,7 +68,7 @@ class BidCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                     child: Text(
-                      'Initial Bid: $initialBid',
+                      'Latest Bid: $latestBid',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
