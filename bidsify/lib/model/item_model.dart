@@ -39,7 +39,9 @@ class ItemModel {
       ownerId: map['ownerId'] ?? "",
       itemPic: map['itemPic'] ?? "",
       price: map['price'] ?? 0.0,
-      bids: map['bids'] ?? [],
+       bids: (map['bids'] as List<dynamic>)
+          .map((bid) => BidModel.fromMap(bid as Map<String, dynamic>))
+          .toList(),
     );
   }
 }

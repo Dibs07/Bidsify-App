@@ -47,7 +47,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               return ListView.builder(
                 itemCount: items.length,
                 itemBuilder: (context, index) {
-                  final ItemModel item = items[index].data();
+                   ItemModel item = items[index].data();
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: BidCard(

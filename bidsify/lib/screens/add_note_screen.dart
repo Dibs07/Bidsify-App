@@ -228,6 +228,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   _onBidPlaced() {
     if (newBid != null) {
       // do
+
     }
   }
 
@@ -250,6 +251,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 child: Column(
                   children: [
                     TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Enter your bid',
+                        border: OutlineInputBorder(),
+                        fillColor: Colors.white,
+                      ),
                       keyboardType: TextInputType.number,
                       onChanged: (value) {
                         newBid = value;
@@ -306,37 +312,39 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               ],
             ),
           ),
-          StreamBuilder(
-            stream: _bidService.getItems(ownerId: _authService.user!.uid),
-            builder: (context, snapshot) {
-
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return Center(child: Text('No items found'));
-              }
-
-              final items = snapshot.data!.docs;
-                  
-
-              return ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  final ItemModel item = items[index].data();
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: BidCard(
-                      title: item.name,
-                      bidder: _authService.user!.uid,
-                      latestBid: item.price,
-                      onClick: placeBid,
-                    ),
-                  );
-                },
-              );
-            },
+          Expanded(
+            child: StreamBuilder(
+              stream: _bidService.getItems(),
+              builder: (context, snapshot) {
+            
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+            
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No items found'));
+                }
+            
+                final items = snapshot.data!.docs;
+                    
+            
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    ItemModel item = items[index].data();
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                      child: BidCard(
+                        title: item.name,
+                        bidder: _authService.user!.uid,
+                        latestBid: item.price,
+                        onClick: placeBid,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

@@ -44,8 +44,8 @@ class BidService {
     }
   }
   Stream<QuerySnapshot<ItemModel>> getItems(
-      {required String ownerId}) {
-    return items!.where('ownerId', isNotEqualTo: ownerId).snapshots()
+      ) {
+    return items!.where('ownerId', isNotEqualTo: _authService.user!.uid).snapshots()
         as Stream<QuerySnapshot<ItemModel>>;
   }
 
