@@ -4,6 +4,7 @@ import 'package:enefty_icons/enefty_icons.dart';
 import 'package:notes/screens/add_note_screen.dart';
 import 'package:notes/screens/history_page.dart';
 import 'package:notes/screens/main_screen.dart';
+import 'package:notes/screens/profile_screen.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _MyHomePageState extends State<MyHomePage> {
     HomeScreen(),
     AddNoteScreen(),
     HistoryScreen(),
+    ProfileScreen(),
     Text(
       'Profile Page',
       style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
