@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/screens/home_screen.dart';
@@ -17,11 +18,13 @@ Future<void> main() async {
   await setup();
   runApp(const ProviderScope(child: MyApp()));
 }
+
 Future<void> setup() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupFirebase();
   await registerService();
 }
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -36,10 +39,12 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
-    
   }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: FToastBuilder(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
           textTheme: GoogleFonts.latoTextTheme(

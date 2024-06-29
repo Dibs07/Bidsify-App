@@ -1,9 +1,11 @@
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/contract_link/contract_linking.dart';
 import 'package:notes/services/auth_service.dart';
+import 'package:notes/widgets/toast.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -16,17 +18,54 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   bool checkBoxState = false;
   String? _name, _email, _password, _confirmPassword;
   final GetIt getIt = GetIt.instance;
   late AuthService _authService;
+  late FToast fToast;
   @override
   void initState() {
     super.initState();
     _authService = getIt.get<AuthService>();
+    fToast = FToast();
+    fToast.init(context);
   }
-   
+
+  _showToast(String message, bool isValid) {
+    Widget toast = CustomToaster(
+      message: message,
+      isValid: isValid,
+    );
+
+    fToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: const Duration(seconds: 2),
+    );
+  }
+
+  _signUp() async {
+    final form = _formKey.currentState;
+    if (form!.validate()) {
+      form.save();
+      if (_password != _confirmPassword) {
+        _showToast("Password does not match", false);
+        return;
+      }
+      bool res = await _authService.register(_email!, _password!);
+      if (res) {
+        _showToast("Account Created", true);
+        Navigator.popAndPushNamed(context, '/home_screen');
+      } else {
+        _showToast("Failed to Signin", false);
+      }
+    } else {
+      _showToast("Invalid Credentials", false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimateGradient(
@@ -49,21 +88,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text('Sign Up',
-                          style: kHeadingTextStyle.copyWith(
-                            fontSize: 55
-                          ),
+                        child: Text(
+                          'Sign Up',
+                          style: kHeadingTextStyle.copyWith(fontSize: 55),
                         ),
                       ),
-                   const SizedBox(height: 20),
-                  
+                      const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TextFormField(
-                          validator: (val) => val!.length<6 ? 'Enter a valid name' : null,
+                          validator: (val) =>
+                              val!.length < 6 ? 'Enter a valid name' : null,
                           onSaved: (val) => _name = val!,
                           style: kInputTextFieldStyle,
                           decoration: kTextFieldDecoration.copyWith(
@@ -76,11 +113,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                  
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TextFormField(
-                          validator: (val) => val!.isEmpty ? 'Enter a valid email' : null,
+                          validator: (val) =>
+                              val!.isEmpty ? 'Enter a valid email' : null,
                           onSaved: (val) => _email = val!,
                           style: kInputTextFieldStyle,
                           decoration: kTextFieldDecoration.copyWith(
@@ -92,13 +129,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           },
                         ),
                       ),
-                  
                       const SizedBox(height: 20),
-                  
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TextFormField(
-                          validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
+                          validator: (val) => val!.length < 6
+                              ? 'Enter a password 6+ chars long'
+                              : null,
                           onSaved: (val) => _password = val!,
                           style: kInputTextFieldStyle,
                           decoration: kTextFieldDecoration.copyWith(
@@ -110,13 +147,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           },
                         ),
                       ),
-                  
                       const SizedBox(height: 20),
-                  
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TextFormField(
-                          validator: (val) => val!.length<6? 'Password should match' : null,
+                          validator: (val) =>
+                              val!.length < 6 ? 'Password should match' : null,
                           onSaved: (val) => _confirmPassword = val!,
                           style: kInputTextFieldStyle,
                           decoration: kTextFieldDecoration.copyWith(
@@ -139,80 +175,59 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: Row(
                         children: [
                           const SizedBox(width: 2),
-                          Checkbox(value: checkBoxState, onChanged: (value) {
-                            setState(() {
-                              checkBoxState = !checkBoxState;
-                            });
-                          }),
-
-                          const Text('Remember Me',
-                            style: TextStyle(
-                              color: Colors.white
-                            ),
+                          Checkbox(
+                              value: checkBoxState,
+                              onChanged: (value) {
+                                setState(() {
+                                  checkBoxState = !checkBoxState;
+                                });
+                              }),
+                          const Text(
+                            'Remember Me',
+                            style: TextStyle(color: Colors.white),
                           )
                         ],
                       ),
-                    ), 
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: myButton(height: 50, width: double.infinity, text: 'Continue', onClick: _signUp),
+                  child: myButton(
+                      height: 50,
+                      width: double.infinity,
+                      text: 'Continue',
+                      onClick: _signUp),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Already have an account?',
-                        style: TextStyle(
-                          color: Colors.white
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Already have an account?',
+                          style: TextStyle(color: Colors.white),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          
-                         Navigator.popAndPushNamed(context, '/login');
-                        },
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            color: kSecondaryColor
+                        TextButton(
+                          onPressed: () {
+                            Navigator.popAndPushNamed(context, '/login');
+                          },
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(color: kSecondaryColor),
                           ),
                         ),
-                      ),
-                    ],
-                  )
-                ) 
+                      ],
+                    ))
               ],
             ),
           )),
     );
   }
- 
-_signUp() async {
-    final form = _formKey.currentState;
-    if (form!.validate()) {
-      form.save();
-      if(_password != _confirmPassword) {
-        print("Password does not match");
-        return;
-      }
-      bool res = await _authService.register(_email!, _password!);
-      if (res) {
-        Navigator.popAndPushNamed(context, '/home_screen');
-      } else {
-        print("Failed");
-      }
-    } else {
-      print("Invalid");
-    }
-  }
+
   //   _createAccount() {
   //   var contractLinking = Provider.of<ContractLinking>(context, listen: false);
   //   contractLinking.createAccount(_name, _password, _email);
   // }
 }
-
-
