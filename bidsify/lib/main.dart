@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/screens/create_auction.dart';
+import 'package:notes/screens/create_auction_page.dart';
 import 'package:notes/screens/home_screen.dart';
 import 'package:notes/screens/login_screen.dart';
 import 'package:notes/screens/registration_screen.dart';
@@ -64,6 +66,8 @@ class _MyAppState extends State<MyApp> {
         '/registration': (context) => const RegistrationScreen(),
         '/home_screen': (context) => MyHomePage(),
         '/user_preferences': (context) => const UserPreferences(),
+        '/add_auction_page': (context) => const AuctionPage(),
+        '/create_auction_page': (context) => CreateAuctionPage(),
       },
     );
   }

@@ -31,6 +31,9 @@ const kInputTextFieldStyle = TextStyle(
   color: Colors.white
 );
 
+const kBackgroundColorButton = Color(0x663348B5);
+const kForegroundColorButton = Color(0xFF3348B5);
+
 class myButton extends StatelessWidget {
   final double height;
   final double width;
@@ -114,9 +117,13 @@ class OptionsCard extends StatelessWidget {
 
 class SmallButtons extends StatelessWidget {
   final Widget icon;
+  final String text;
+  final VoidCallback onClick;
   const SmallButtons({
     super.key,
-    required this.icon
+    required this.icon,
+    required this.text,
+    required this.onClick,
   });
 
   @override
@@ -124,7 +131,7 @@ class SmallButtons extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(13, 0, 0, 0),
       child: TextButton(
-        onPressed: () {},
+        onPressed: onClick,
         // child: const Text(
         //   'Hello',
         //   style: TextStyle(
@@ -132,7 +139,19 @@ class SmallButtons extends StatelessWidget {
         //     fontSize: 16
         //   ),
         // ),
-        child: icon,
+        child: SizedBox(
+          width: 100,
+          child: Row(
+            children: [
+              icon,
+              Text(text,
+                style: TextStyle(
+                  color: Colors.white
+                ),
+              )
+            ],
+          ),
+        ),
         style: ElevatedButton.styleFrom(
           minimumSize: Size.zero,
           padding: const EdgeInsets.fromLTRB(24, 6, 24, 6),
