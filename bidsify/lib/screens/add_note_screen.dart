@@ -35,6 +35,10 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
   var value = 0;
 
+  onAuctionClick() {
+    Navigator.pushNamed(context, '/create_auction_page');
+  }
+
   onClick() {
     showDialog(
       context: context,
@@ -199,7 +203,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                     height: 90,
                     width: 175),
                 OptionsCard(
-                    onClick: () {},
+                    onClick: onAuctionClick,
                     title: 'Create an\nAuction',
                     icon: Icon(EneftyIcons.courthouse_outline),
                     height: 90,
@@ -209,7 +213,18 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: AuctionCard(
+            child: BidCard(
+              title: 'Here Goes Auction 1',
+              bidder: {"Sayan": ""},
+              initialBid: 0.0,
+              currentBid: 10.2,
+              onClick: placeBid
+            ),
+          ),
+          SizedBox(height: 25),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: BidCard(
               title: 'Here Goes Auction 1',
               bidder: {"Sayan": ""},
               initialBid: 0.0,

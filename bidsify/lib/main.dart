@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/screens/create_auction.dart';
+import 'package:notes/screens/create_auction_page.dart';
 import 'package:notes/screens/home_screen.dart';
 import 'package:notes/screens/login_screen.dart';
 import 'package:notes/screens/registration_screen.dart';
@@ -58,14 +60,16 @@ class _MyAppState extends State<MyApp> {
           splashFactory: NoSplash.splashFactory, // Custom splash factory
           scaffoldBackgroundColor: kMobileBackgroundColor),
       // initialRoute: _user != null OnboardingScreen.id : HomeScreen.id,
-      initialRoute: _authService.user != null ? '/user_details' : '/',
+      initialRoute: _authService.user != null ? '/home_screen' : '/',
       routes: {
         '/': (context) => OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
         '/registration': (context) => const RegistrationScreen(),
         '/home_screen': (context) => MyHomePage(),
         '/user_preferences': (context) => const UserPreferences(),
-        '/user_details': (context) => const UserDetailsScreen(),
+        '/add_auction_page': (context) => AuctionPage(),
+        '/create_auction_page': (context) => CreateAuctionPage(),
+        '/user_details_form': (context) => const UserDetailsScreen(),
       },
     );
   }

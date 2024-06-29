@@ -57,7 +57,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       bool res = await _authService.register(_email!, _password!);
       if (res) {
         _showToast("Account Created", true);
-        Navigator.popAndPushNamed(context, '/home_screen');
+        Navigator.popAndPushNamed(context, '/user_details_form');
       } else {
         _showToast("Failed to Signin", false);
       }
@@ -98,23 +98,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           style: kHeadingTextStyle.copyWith(fontSize: 55),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: TextFormField(
-                          validator: (val) =>
-                              val!.length < 6 ? 'Enter a valid name' : null,
-                          onSaved: (val) => _name = val!,
-                          style: kInputTextFieldStyle,
-                          decoration: kTextFieldDecoration.copyWith(
-                            hintText: 'Enter your username',
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) {
-                            // email = value;
-                          },
-                        ),
-                      ),
+                      
                       const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -211,7 +195,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       width: double.infinity,
                       text: 'Continue',
                       onClick: () {
-                        Navigator.popAndPushNamed(context, '/user_details');
+                        _signUp();
                       }),
                 ),
                 Padding(
