@@ -68,48 +68,55 @@ class OptionsCard extends StatelessWidget {
   final Icon? icon;
   final double height;
   final double width;
+  final VoidCallback onClick;
 
   const OptionsCard({
     super.key,
     required this.title,
     this.icon,
     required this.height,
-    required this.width
+    required this.width,
+    required this.onClick
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: Color(0x663348B5),
+    return GestureDetector(
+      onTap: onClick,
+      child: Container(
+        height: height,
+        width: width,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: Color(0x663348B5),
+        ),
+      
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            icon ?? Container(),
+            const SizedBox(width: 12,),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16
+              ),
+            )
+      
+          ],
+        ),
+      
       ),
-    
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          icon ?? Container(),
-          const SizedBox(width: 12,),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16
-            ),
-          )
-    
-        ],
-      ),
-    
     );
   }
 }
 
 class SmallButtons extends StatelessWidget {
+  final Widget icon;
   const SmallButtons({
     super.key,
+    required this.icon
   });
 
   @override
@@ -118,13 +125,14 @@ class SmallButtons extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(13, 0, 0, 0),
       child: TextButton(
         onPressed: () {},
-        child: const Text(
-          'Hello',
-          style: TextStyle(
-            color: Color(0xFF3348B5),
-            fontSize: 16
-          ),
-        ),
+        // child: const Text(
+        //   'Hello',
+        //   style: TextStyle(
+        //     color: Color(0xFF3348B5),
+        //     fontSize: 16
+        //   ),
+        // ),
+        child: icon,
         style: ElevatedButton.styleFrom(
           minimumSize: Size.zero,
           padding: const EdgeInsets.fromLTRB(24, 6, 24, 6),
