@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:notes/firebase_options.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:notes/services/bid_service.dart';
 import 'package:notes/services/data_service.dart';
 import 'package:notes/services/media_service.dart';
 import 'package:notes/services/storage_service.dart';
@@ -23,6 +24,9 @@ Future<void> registerService() async {
   );
   getIt.registerSingleton<StorageService>(
     StorageService(),
+  );
+   getIt.registerSingleton<BidService>(
+    BidService(),
   );
 }
 
