@@ -20,8 +20,7 @@ class _MyHomePageState extends State<MyHomePage> {
     HomeScreen(),
     AddNoteScreen(),
     HistoryScreen(),
-  //  ProfileScreen(),
-  UserPreferences(),
+    ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
