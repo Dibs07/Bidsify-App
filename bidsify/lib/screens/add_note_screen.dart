@@ -33,6 +33,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     });
   }
 
+  var value = 0;
+
   onClick() {
     showDialog(
       context: context,
@@ -136,6 +138,50 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     );
   }
 
+  placeBid() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Place your Bid Here',
+                style: kHeadingTextStyle.copyWith(
+                  fontSize: 35
+                ),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              content: SizedBox(
+                height: 130,
+                child: Column(
+                  children: [
+                    
+                    TextField(
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(height: 20),
+                    myButton(width: double.infinity, height: 50, text: 'Save', onClick: (){})
+
+                  ],
+                ),
+              ),
+              // actions: [
+              //   TextButton(
+              //     child: Text('Close'),
+              //     onPressed: () {
+              //       Navigator.of(context).pop();
+              //     },
+              //   ),
+              // ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,11 +193,13 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 OptionsCard(
+                    onClick: onClick,
                     title: 'Create a Bid',
                     icon: Icon(EneftyIcons.card_add_outline),
                     height: 90,
                     width: 175),
                 OptionsCard(
+                    onClick: () {},
                     title: 'Create an\nAuction',
                     icon: Icon(EneftyIcons.courthouse_outline),
                     height: 90,
@@ -166,7 +214,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               bidder: {"Sayan": ""},
               initialBid: 0.0,
               currentBid: 10.2,
-              onClick: onClick
+              onClick: placeBid
             ),
           ),
         ],

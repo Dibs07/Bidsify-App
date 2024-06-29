@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:enefty_icons/enefty_icons.dart';
+import 'package:notes/model/user_model.dart';
 import 'package:notes/screens/add_bid_page.dart';
 import 'package:notes/screens/add_note_screen.dart';
+import 'package:notes/screens/chat_page.dart';
+import 'package:notes/screens/chats_page.dart';
 import 'package:notes/screens/history_page.dart';
 import 'package:notes/screens/main_screen.dart';
 import 'package:notes/screens/profile_screen.dart';
@@ -21,7 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
     AddNoteScreen(),
     HistoryScreen(),
     ProfileScreen(),
-    ProfileScreen()
+    HomePage(),
   ];
 
   void _onItemTapped(int index) {

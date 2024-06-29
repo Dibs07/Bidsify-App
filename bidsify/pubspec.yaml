@@ -48,6 +48,10 @@ dependencies:
   fluttertoast: ^8.2.6
   cloud_firestore: ^5.0.2
   neon_widgets: ^2.0.0
+  image_picker: ^1.1.2
+  firebase_storage: ^12.1.0
+  path: ^1.9.0
+  dash_chat_2: ^0.0.21
   
 
 dev_dependencies:
