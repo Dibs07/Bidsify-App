@@ -8,16 +8,18 @@ import 'package:notes/screens/registration_screen.dart';
 import 'package:notes/screens/onboarding_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:notes/utils.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await setup();
   runApp(const ProviderScope(child: MyApp()));
 }
-
+Future<void> setup() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupFirebase();
+  await registerService();
+}
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -40,7 +42,7 @@ class _MyAppState extends State<MyApp> {
           splashFactory: NoSplash.splashFactory, // Custom splash factory
           scaffoldBackgroundColor: kMobileBackgroundColor),
       // initialRoute: _user != null ? OnboardingScreen.id : HomeScreen.id,
-      initialRoute: '/home_screen',
+      initialRoute: '/',
       routes: {
         '/': (context) => OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
