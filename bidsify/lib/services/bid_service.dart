@@ -50,10 +50,10 @@ class BidService {
   }
 
 
-  Stream<List<ItemModel>> getItemsbyownerid(
+  Stream<QuerySnapshot<ItemModel>> getItemsbyownerid(
       {required String ownerId}) {
     return items!.where('ownerId', isEqualTo: ownerId).snapshots()
-        as Stream<List<ItemModel>>;
+        as Stream<QuerySnapshot<ItemModel>>;
   }
 
   Stream<List<BidModel>> getallBids() {

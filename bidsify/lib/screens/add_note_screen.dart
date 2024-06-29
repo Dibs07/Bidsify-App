@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -108,130 +109,127 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   }
 
   Future<void> onClick(BuildContext context) async {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Add Bid Details',
-                        style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      const SizedBox(height: 20),
-                      _isLoading
-                          ? Center(child: CircularProgressIndicator())
-                          : _imageFile == null
-                              ? Center(
-                                  child: Text(
-                                    'No image selected.',
-                                    style: TextStyle(color: Colors.grey),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Add Bid Details',
+                          style: TextStyle(
+                              fontSize: 35,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        const SizedBox(height: 20),
+                        _isLoading
+                            ? Center(child: CircularProgressIndicator())
+                            : _imageFile == null
+                                ? Center(
+                                    child: Text(
+                                      'No image selected.',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  )
+                                : Center(
+                                    child: SizedBox(
+                                      height: 80,
+                                      child: Image.file(_imageFile!),
+                                    ),
                                   ),
-                                )
-                              : Center(
-                                  child: SizedBox(
-                                    height: 80,
-                                    child: Image.file(_imageFile!),
-                                  ),
-                                ),
-                      ElevatedButton(
-                        onPressed: () => _pickImage(setState),
-                        child: Text('Pick Image'),
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        style: TextStyle(fontSize: 16),
-                        decoration: InputDecoration(
-                          hintText: 'Title',
-                          border: OutlineInputBorder(),
+                        ElevatedButton(
+                          onPressed: () => _pickImage(setState),
+                          child: Text('Pick Image'),
                         ),
-                        keyboardType: TextInputType.name,
-                        controller: _titleController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a title';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        style: TextStyle(fontSize: 16),
-                        decoration: InputDecoration(
-                          hintText: 'Description',
-                          border: OutlineInputBorder(),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          style: TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            hintText: 'Title',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.name,
+                          controller: _titleController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title';
+                            }
+                            return null;
+                          },
                         ),
-                        keyboardType: TextInputType.text,
-                        controller: _descriptionController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a description';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        style: TextStyle(fontSize: 16),
-                        decoration: InputDecoration(
-                          hintText: 'Enter Initial Bid',
-                          border: OutlineInputBorder(),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          style: TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            hintText: 'Description',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.text,
+                          controller: _descriptionController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a description';
+                            }
+                            return null;
+                          },
                         ),
-                        keyboardType: TextInputType.number,
-                        controller: _bidController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please place a bid';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _submitForm();
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child: Text('Save'),
-                      ),
-                    ],
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          style: TextStyle(fontSize: 16),
+                          decoration: InputDecoration(
+                            hintText: 'Enter Initial Bid',
+                            border: OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          controller: _bidController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please place a bid';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _submitForm();
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          child: Text('Save'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
-var newBid;
-
-
-
-
-
-_onBidPlaced() {
-  if (newBid != null) {
-    // do
+            );
+          },
+        );
+      },
+    );
   }
-}
 
+  var newBid;
 
+  _onBidPlaced() {
+    if (newBid != null) {
+      // do
+    }
+  }
 
   placeBid() {
     showDialog(
@@ -256,11 +254,13 @@ _onBidPlaced() {
                       onChanged: (value) {
                         newBid = value;
                       },
-                      
                     ),
                     SizedBox(height: 20),
-                    myButton(width: double.infinity, height: 50, text: 'Save', onClick: _onBidPlaced)
-
+                    myButton(
+                        width: double.infinity,
+                        height: 50,
+                        text: 'Save',
+                        onClick: _onBidPlaced)
                   ],
                 ),
               ),
@@ -306,44 +306,38 @@ _onBidPlaced() {
               ],
             ),
           ),
-          
-          
-          
-          
-          
-          
-          
-          
-          
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: BidCard(
-              title: 'Here Goes Auction 1',
-              bidder: {"Sayan": ""},
-              latestBid: 0.0,
-              currentBid: 10.2,
-              onClick: placeBid
-            ),
-          ),
-          
-          
-          
-          SizedBox(height: 25),
-          
-          
-          
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: BidCard(
-              title: 'Here Goes Auction 1',
-              bidder: {"Sayan": ""},
-              latestBid: 0.0,
-              currentBid: 10.2,
-              onClick: placeBid
-            ),
-          ),
+          StreamBuilder(
+            stream: _bidService.getItems(ownerId: _authService.user!.uid),
+            builder: (context, snapshot) {
 
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
 
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(child: Text('No items found'));
+              }
+
+              final items = snapshot.data!.docs;
+                  
+
+              return ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final ItemModel item = items[index].data();
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: BidCard(
+                      title: item.name,
+                      bidder: _authService.user!.uid,
+                      latestBid: item.price,
+                      onClick: placeBid,
+                    ),
+                  );
+                },
+              );
+            },
+          ),
         ],
       ),
     );

@@ -32,16 +32,35 @@ class _HistoryScreenState extends State<HistoryScreen> {
         padding: const EdgeInsets.fromLTRB(0, 50, 0, 15),
         child: Column(
           children: [
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: BidCard(
-                  title: 'Here Goes Auction 1',
-                  bidder: {"name": "Sayan"},
-                  latestBid: 0.0,
-                  currentBid: 10.0,
-                  onClick: onClick,
-                  transactionId: "15688446511555555555555555555555555555551846318546846",
-                )),
+             StreamBuilder(
+            stream: _bidService.getItemsbyownerid(ownerId: _authService.user!.uid),
+            builder: (context, snapshot) {
+
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return Center(child: Text('No items found'));
+              }
+              final items = snapshot.data!.docs;   
+              return ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final ItemModel item = items[index].data();
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: BidCard(
+                      title: item.name,
+                      bidder: _authService.user!.uid,
+                      latestBid: item.price,
+                      onClick: (){},
+                    ),
+                  );
+                },
+              );
+            },
+          ),
           ],
         ),
       ),

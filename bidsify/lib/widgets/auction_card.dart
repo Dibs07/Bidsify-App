@@ -4,9 +4,9 @@ import 'package:notes/model/user_model.dart';
 
 class BidCard extends StatelessWidget {
   final String title;
-  final Map<String, String> bidder;
+  final String bidder;
   final double latestBid;
-  final double currentBid;
+
   final VoidCallback onClick;
   final String? transactionId;
   const BidCard({
@@ -14,7 +14,7 @@ class BidCard extends StatelessWidget {
     required this.title,
     required this.bidder,
     required this.latestBid,
-    required this.currentBid,
+
     required this.onClick,
     this.transactionId,
   });
@@ -81,7 +81,7 @@ class BidCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 19, vertical: 8),
                     child: Text(
-                      'Your Bid: $currentBid',
+                      'Your Bid: $latestBid',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
