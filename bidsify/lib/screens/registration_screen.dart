@@ -171,8 +171,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       TextButton(
                         onPressed: () {
-                          _signUp();
-                         //Navigator.popAndPushNamed(context, '/login');
+                          
+                         Navigator.popAndPushNamed(context, '/login');
                         },
                         child: const Text(
                           'Login',
@@ -196,7 +196,11 @@ _signUp() async {
       form.save();
       print("Username: $_name , Email: $_email , Password: $_password");
       bool res = await _authService.register(_email!, _password!);
-      print(res);
+      if (res) {
+        Navigator.popAndPushNamed(context, '/home_screen');
+      } else {
+        print("Failed");
+      }
     } else {
       print("Invalid");
     }
