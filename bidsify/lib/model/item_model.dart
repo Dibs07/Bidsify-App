@@ -1,3 +1,5 @@
+import 'package:notes/model/bid_model.dart';
+
 class ItemModel {
   final String uid;
   final String name;
@@ -5,6 +7,7 @@ class ItemModel {
   final String ownerId;
   final String? itemPic;
   final double? price;
+  final List<BidModel> bids;
 
   ItemModel({
     required this.uid,
@@ -12,6 +15,7 @@ class ItemModel {
     required this.descrription,
     required this.ownerId,
     required this.price,
+    required this.bids,
     this.itemPic,
   });
 
@@ -23,6 +27,7 @@ class ItemModel {
       'ownerId': ownerId,
       'itemPic': itemPic,
       'price': price,
+      'bids': bids,
     };
   }
 
@@ -34,6 +39,7 @@ class ItemModel {
       ownerId: map['ownerId'] ?? "",
       itemPic: map['itemPic'] ?? "",
       price: map['price'] ?? 0.0,
+      bids: map['bids'] ?? [],
     );
   }
 }
