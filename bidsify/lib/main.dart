@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/screens/home_screen.dart';
 import 'package:notes/screens/login_screen.dart';
@@ -8,6 +9,7 @@ import 'package:notes/screens/registration_screen.dart';
 import 'package:notes/screens/onboarding_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:notes/services/auth_service.dart';
 import 'package:notes/utils.dart';
 import 'firebase_options.dart';
 
@@ -28,7 +30,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late AuthService _authService;
+
   @override
+  void initState() {
+    super.initState();
+    _authService = GetIt.instance.get<AuthService>();
+    
+  }
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -42,7 +51,7 @@ class _MyAppState extends State<MyApp> {
           splashFactory: NoSplash.splashFactory, // Custom splash factory
           scaffoldBackgroundColor: kMobileBackgroundColor),
       // initialRoute: _user != null ? OnboardingScreen.id : HomeScreen.id,
-      initialRoute: '/',
+      initialRoute: _authService.user != null ? '/home_screen' : '/',
       routes: {
         '/': (context) => OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
