@@ -14,7 +14,7 @@ class _CreateAuctionPageState extends State<CreateAuctionPage> {
   List<Widget> _auctionItems = [];
 
   onClick() async {
-    final Map? args = await Navigator.pushNamed(context, '/add_auction_page');
+    final args = await Navigator.pushNamed(context, '/add_auction_page') as Map?;
     if (args != null) {
       setState(() {
         _auctionItems.add(
