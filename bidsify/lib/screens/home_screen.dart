@@ -21,6 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
     AddNoteScreen(),
     HistoryScreen(),
     ProfileScreen(),
+    ProfileScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -55,6 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(EneftyIcons.profile_2user_outline),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(EneftyIcons.chart_2_bold),
             label: 'Profile',
           ),
         ],
