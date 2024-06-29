@@ -1,87 +1,105 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:web_socket_channel/io.dart';
 
-class ContractLinking extends ChangeNotifier {
+class ContractLinking {
   final String _rpcUrl = "http://127.0.0.1:7545";
   final String _wsUrl = "ws://127.0.0.1:7545/";
-  final String _privateKey =
-      "0x643c5f2782ee4835532c544f30dcbfee4b004ebd0f2cc1f1f44564ff1d4469cd";
+  final String _privateKey = "0x643c5f2782ee4835532c544f30dcbfee4b004ebd0f2cc1f1f44564ff1d4469cd";
 
-  late Web3Client _client;
-  late String _abiCode;
+  Web3Client? _client;
+  bool isLoading = true;
 
-  late EthereumAddress _contractAddress;
-  late Credentials _credentials;
+  String? _abiCode;
+  EthereumAddress? _contractAddress;
+  Credentials? _credentials;
 
-  late DeployedContract _contract;
-  late ContractFunction _createAccount;
-  late ContractFunction _loginAccount;
-
-  bool isLoading = false;
+  DeployedContract? _contract;
+  ContractFunction? _placeBid;
+  ContractFunction? _finalizeAuction;
+  ContractFunction? _highestBid;
+  ContractFunction? _highestBidder;
 
   ContractLinking() {
     initialSetup();
   }
 
-  initialSetup() async {
-    _client = Web3Client(_rpcUrl, Client(), socketConnector: () {
-      return IOWebSocketChannel.connect(_wsUrl).cast<String>();
-    });
+  Future<void> initialSetup() async {
+    _client = Web3Client(_rpcUrl, Client());
     await getAbi();
     await getCredentials();
     await getDeployedContract();
   }
 
-  getAbi() async {
-    String artifactString =
-        await rootBundle.loadString("src/artifacts/Auth.json");
-    var jsonFile = jsonDecode(artifactString);
-    _abiCode = jsonEncode(jsonFile["abi"]);
-    _contractAddress =
-        EthereumAddress.fromHex(jsonFile["networks"]["5777"]["address"]);
+  Future<void> getAbi() async {
+    String abiStringFile = await rootBundle.loadString('assets/YourContract.json');
+    var jsonAbi = jsonDecode(abiStringFile);
+    _abiCode = jsonEncode(jsonAbi['abi']);
+    _contractAddress = EthereumAddress.fromHex(jsonAbi['networks']['NETWORK_ID']['address']);
   }
 
-  getCredentials() async {
-    _credentials = await credentialsFromPrivateKey(_privateKey);
+  Future<void> getCredentials() async {
+    _credentials = EthPrivateKey.fromHex(_privateKey);
   }
-Future<EthPrivateKey> credentialsFromPrivateKey(String privateKey) {
-  return Future.value(EthPrivateKey.fromHex(privateKey));
-}
-  getDeployedContract() async {
+
+  Future<void> getDeployedContract() async {
     _contract = DeployedContract(
-        ContractAbi.fromJson(_abiCode, "Auth"), _contractAddress);
+      ContractAbi.fromJson(_abiCode!, 'Auction'),
+      _contractAddress!,
+    );
 
-    _createAccount = _contract.function("createAccount");
-    _loginAccount = _contract.function("loginAccount");
+    _placeBid = _contract!.function('placeBid');
+    _finalizeAuction = _contract!.function('finalizeAuction');
+    _highestBid = _contract!.function('highestBindingBid');
+    _highestBidder = _contract!.function('highestBidder');
+
+    isLoading = false;
   }
 
-  createAccount(String name, String pass, String mail) async {
+  Future<void> placeBid() async {
     isLoading = true;
-    notifyListeners();
-
-    await _client.sendTransaction(
-        _credentials,
-        Transaction.callContract(
-            contract: _contract,
-            function: _createAccount,
-            parameters: [name, pass, mail],
-            maxGas: 1000000));
-    print("Account Created Bro");
-
+    await _client!.sendTransaction(
+      _credentials!,
+      Transaction.callContract(
+        contract: _contract!,
+        function: _placeBid!,
+        parameters: [],
+        // ignore: deprecated_member_use
+        value: EtherAmount.fromUnitAndValue(EtherUnit.ether, 1),
+      ),
+    );
     isLoading = false;
-    notifyListeners();
   }
 
-  loginAccount(String mail, String pass) async {
-    var msg = await _client.call(
-        contract: _contract, function: _loginAccount, params: [mail, pass]);
-    print(msg[0]);
+  Future<void> finalizeAuction() async {
+    isLoading = true;
+    await _client!.sendTransaction(
+      _credentials!,
+      Transaction.callContract(
+        contract: _contract!,
+        function: _finalizeAuction!,
+        parameters: [],
+      ),
+    );
     isLoading = false;
-    notifyListeners();
+  }
+
+  Future<EtherAmount> getHighestBid() async {
+    final result = await _client!.call(
+      contract: _contract!,
+      function: _highestBid!,
+      params: [],
+    );
+    return result.first as EtherAmount;
+  }
+
+  Future<EthereumAddress> getHighestBidder() async {
+    final result = await _client!.call(
+      contract: _contract!,
+      function: _highestBidder!,
+      params: [],
+    );
+    return result.first as EthereumAddress;
   }
 }
