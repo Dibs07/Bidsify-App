@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // style: ButtonStyle(
                 //   backgroundColor:  Colors.black,
                 // ),
-                onPressed: logout(),
+                onPressed: logout,
                 child: Text('Logout',
                   style: TextStyle(
                     fontWeight: FontWeight.w900,

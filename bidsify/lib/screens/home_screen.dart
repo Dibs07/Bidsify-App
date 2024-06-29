@@ -19,10 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
     HomeScreen(),
     AddNoteScreen(),
     HistoryScreen(),
-    Text(
-      'Profile Page',
-      style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
-    ),
+   ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
