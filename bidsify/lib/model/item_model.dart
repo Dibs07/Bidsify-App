@@ -9,6 +9,7 @@ class ItemModel {
   late double? price;
   late String lastBid;
   final List<BidModel> bids;
+  late bool? isSold;
 
   ItemModel({
     required this.uid,
@@ -18,6 +19,7 @@ class ItemModel {
     required this.price,
     required this.bids,
     required this.lastBid,
+    this.isSold=false,
     this.itemPic,
   });
 
@@ -31,6 +33,8 @@ class ItemModel {
       'price': price,
       'bids': bids.map((bid) => bid.toMap()).toList(),
       'lastBid': lastBid,
+      'isSold': isSold,
+      
     };
   }
 
@@ -44,6 +48,7 @@ class ItemModel {
       price: map['price'] ?? 0.0,
       lastBid: map['lastBid'] ?? "",
       bids: List<BidModel>.from(map['bids']?.map((x) => BidModel.fromMap(x))),
+      isSold: map['isSold'] ?? false,
     );
   }
 }
