@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes/constants/constants.dart';
@@ -28,12 +29,14 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   late BidService _bidService;
   late StorageService _storageService;
   late AuthService _authService;
+  late FToast fToast;
   @override
   void initState() {
     super.initState();
     _bidService = GetIt.instance.get<BidService>();
     _storageService = GetIt.instance.get<StorageService>();
     _authService = GetIt.instance.get<AuthService>();
+    
   }
 
   final _formKey = GlobalKey<FormState>();
