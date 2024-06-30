@@ -94,6 +94,8 @@ class _ChatPageState extends State<ChatPage> {
       messageOptions: const MessageOptions(
         showOtherUsersAvatar: true,
         showTime: true,
+        textColor: Colors.white,
+        currentUserTextColor: Colors.white
         
       ),
       inputOptions:InputOptions(

@@ -20,6 +20,11 @@ const kHeadingTextStyle = TextStyle(
   fontWeight: FontWeight.bold,
   color: Colors.white
 );
+const kSubHeadingTextStyle = TextStyle(
+  fontSize: 16,
+  fontWeight: FontWeight.w400,
+  color: Colors.white,
+);
 const kSecondaryColor = Color(0xFFAA33B5);
 const kTextFieldDecoration = InputDecoration(
   border: OutlineInputBorder(),

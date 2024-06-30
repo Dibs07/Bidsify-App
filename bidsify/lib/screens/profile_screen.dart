@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -21,8 +23,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late AuthService _authService;
   late DataService _dataService;
   late BidService _bidService;
-   late Future<void> _loadUserDataFuture;
-   String _displayName = '';
+  late Future<void> _loadUserDataFuture;
+  String _displayName = '';
   String _profilepic = '';
   @override
   void initState() {
@@ -30,16 +32,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _authService = GetIt.instance.get<AuthService>();
     _dataService = GetIt.instance.get<DataService>();
     _bidService = GetIt.instance.get<BidService>();
-     if (_authService.user == null) {
+    if (_authService.user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushNamed(context, '/login');
       });
     } else {
       _loadUserDataFuture = _loadUserData();
     }
-    
   }
-Future<void> _loadUserData() async {
+
+  Future<void> _loadUserData() async {
     final userModelStream = _dataService.getUser();
     final event = await userModelStream.first;
     setState(() {
@@ -118,41 +120,50 @@ Future<void> _loadUserData() async {
                 ),
               ),
             ),
-           Expanded(
-            child: StreamBuilder(
-              stream: _bidService.getBidsbyownerID(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
+            Expanded(
+              child: StreamBuilder(
+                stream: _bidService.getBidsbyownerID(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No items found'));
-                }
-
-                final items = snapshot.data!.docs;
-
-                return ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    BidModel item = items[index].data();
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: BidCard(
-                        isHistory: true,
-                        buttonText: '',
-                        title: item.item,
-                        bidder: _displayName,
-                        latestBid: item.maxBid,
-                        onClick: () {},
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No items found',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     );
-                  },
-                );
-              },
+                  }
+
+                  final items = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      BidModel item = items[index].data();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        child: BidCard(
+                          isHistory: true,
+                          buttonText: '',
+                          title: item.item,
+                          bidder: _displayName,
+                          latestBid: item.maxBid,
+                          onClick: () {},
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
           ],
         ),
       ),

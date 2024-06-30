@@ -19,12 +19,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   late AuthService _authService;
   late DataService _dataService;
   late Future<void> _loadUserDataFuture;
-   String _displayName = '';
+  String _displayName = '';
   String _profilepic = '';
   VoidCallback onClick = () => {};
-
-
- 
 
   @override
   void initState() {
@@ -41,7 +38,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       _loadUserDataFuture = _loadUserData();
     }
   }
-    Future<void> _loadUserData() async {
+
+  Future<void> _loadUserData() async {
     final userModelStream = _dataService.getUser();
     final event = await userModelStream.first;
     setState(() {
@@ -49,10 +47,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       _profilepic = event.docs[0].data().profilePic;
     });
   }
- endBid() {
 
-    
-  }
+  endBid() {}
 
   @override
   Widget build(BuildContext context) {
@@ -61,41 +57,50 @@ class _HistoryScreenState extends State<HistoryScreen> {
         padding: const EdgeInsets.fromLTRB(0, 50, 0, 15),
         child: Column(
           children: [
-             Expanded(
-            child: StreamBuilder(
-              stream: _bidService.getItemsbyownerid(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
+            Center(
+                child: Text(
+              'My Items',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Colors.white 
+              ),
+            )),
+            Expanded(
+              child: StreamBuilder(
+                stream: _bidService.getItemsbyownerid(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No items found'));
-                }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text('No items found'));
+                  }
 
-                final items = snapshot.data!.docs;
+                  final items = snapshot.data!.docs;
 
-                return ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    ItemModel item = items[index].data();
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: BidCard(
-                        isHistory: false,
-                        buttonText: 'End Bid',
-                        title: item.name,
-                        bidder: item.lastBid,
-                        latestBid: item.price,
-                        onClick: endBid,
-                      ),
-                    );
-                  },
-                );
-              },
+                  return ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      ItemModel item = items[index].data();
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        child: BidCard(
+                          isHistory: false,
+                          buttonText: 'End Bid',
+                          title: item.name,
+                          bidder: item.lastBid,
+                          latestBid: item.price,
+                          onClick: endBid,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
           ],
         ),
       ),
