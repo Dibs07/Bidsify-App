@@ -279,6 +279,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           hintText: 'Enter your bid',
                           border: OutlineInputBorder(),
                           fillColor: Colors.white,
+                          labelStyle: TextStyle(
+                            color: Colors.white
+                          )
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
