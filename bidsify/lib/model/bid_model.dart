@@ -4,6 +4,7 @@ class BidModel {
   final String uid;
   final double maxBid;
   final bool isEnded;
+  final String lastBidderId;
   final String lastBidder;
   final String item;
 
@@ -14,6 +15,7 @@ class BidModel {
     required this.isEnded,
     required this.lastBidder,
     required this.item,
+    required this.lastBidderId,
 
   });
 
@@ -25,6 +27,7 @@ class BidModel {
       'isEnded': isEnded,
       'lastBidder': lastBidder,
       'item': item,
+      'lastBidderId': lastBidderId,
 
     };
   }
@@ -36,6 +39,7 @@ class BidModel {
       isEnded: map['isEnded'] ?? false,
       lastBidder: map['lastBidder'] ?? '',
       item: map['item'] ?? '',
+      lastBidderId: map['lastBidderId'] ?? '',
     );
   }
 
