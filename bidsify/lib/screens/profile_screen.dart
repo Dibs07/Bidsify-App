@@ -107,6 +107,17 @@ Future<void> _loadUserData() async {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Text(
+                'Bidding History',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
            Expanded(
             child: StreamBuilder(
               stream: _bidService.getBidsbyownerID(),
@@ -132,7 +143,7 @@ Future<void> _loadUserData() async {
                         isHistory: true,
                         buttonText: '',
                         title: item.item,
-                        bidder: _authService.user!.uid,
+                        bidder: _displayName,
                         latestBid: item.maxBid,
                         onClick: () {},
                       ),
