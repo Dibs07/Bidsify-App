@@ -123,6 +123,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                       child: BidCard(
+                        isHistory: true,
+                        buttonText: '',
                         title: item.item,
                         bidder: _authService.user!.uid,
                         latestBid: item.maxBid,

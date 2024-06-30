@@ -18,6 +18,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
   late AuthService _authService;
   VoidCallback onClick = () => {};
 
+
+  endBid() {
+    //
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -54,10 +60,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                       child: BidCard(
+                        isHistory: false,
+                        buttonText: 'End Bid',
                         title: item.name,
                         bidder: _authService.user!.uid,
                         latestBid: item.price,
-                        onClick: () {},
+                        onClick: endBid,
                       ),
                     );
                   },

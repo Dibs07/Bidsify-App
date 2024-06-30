@@ -372,6 +372,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                       child: BidCard(
+                        isHistory: false,
+                        buttonText: 'Create Bid',
                         title: item.name,
                         bidder: _authService.user!.uid,
                         latestBid: item.price,
