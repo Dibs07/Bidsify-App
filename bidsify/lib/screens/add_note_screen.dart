@@ -42,17 +42,16 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     _storageService = GetIt.instance.get<StorageService>();
     _authService = GetIt.instance.get<AuthService>();
     _dataService = GetIt.instance.get<DataService>();
-if (_authService.user == null) {
+    if (_authService.user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushNamed(context, '/login');
       });
     } else {
       _loadUserDataFuture = _loadUserData();
     }
-
-
   }
-Future<void> _loadUserData() async {
+
+  Future<void> _loadUserData() async {
     final userModelStream = _dataService.getUser();
     final event = await userModelStream.first;
     setState(() {
@@ -60,6 +59,7 @@ Future<void> _loadUserData() async {
       _profilepic = event.docs[0].data().profilePic;
     });
   }
+
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _bidController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
@@ -102,7 +102,7 @@ Future<void> _loadUserData() async {
             descrription: description,
             ownerId: _authService.user!.uid,
             price: double.parse(bid),
-            lastBid: '',
+            lastBid: _displayName,
             bids: [],
             itemPic: url,
           ),
@@ -183,12 +183,11 @@ Future<void> _loadUserData() async {
                         TextFormField(
                           style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Title',
-                            border: OutlineInputBorder(),
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                            )
-                          ),
+                              hintText: 'Title',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.name,
                           controller: _titleController,
                           validator: (value) {
@@ -202,12 +201,11 @@ Future<void> _loadUserData() async {
                         TextFormField(
                           style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Description',
-                            border: OutlineInputBorder(),
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                            )
-                          ),
+                              hintText: 'Description',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.text,
                           controller: _descriptionController,
                           validator: (value) {
@@ -221,12 +219,11 @@ Future<void> _loadUserData() async {
                         TextFormField(
                           style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Enter Initial Bid',
-                            border: OutlineInputBorder(),
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                            )
-                          ),
+                              hintText: 'Enter Initial Bid',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.number,
                           controller: _bidController,
                           validator: (value) {
@@ -258,16 +255,17 @@ Future<void> _loadUserData() async {
     );
   }
 
- late double newBid;
+  late double newBid;
 
   _onBidPlaced({required String bidId, required ItemModel item}) async {
     if (newBid > item.price!) {
-      BidModel newbid =BidModel(
-              uid: bidId + DateTime.now().toString(),
-              maxBid: newBid,
-              isEnded: false,
-              lastBidder: _authService.user!.uid,
-              item: item.name,);
+      BidModel newbid = BidModel(
+        uid: bidId + DateTime.now().toString(),
+        maxBid: newBid,
+        isEnded: false,
+        lastBidder: _authService.user!.uid,
+        item: item.name,
+      );
       await _bidService.createbid(bid: newbid);
       item.price = newBid;
       item.lastBid = _authService.user!.uid;
@@ -280,7 +278,7 @@ Future<void> _loadUserData() async {
     } else {
       print('Bid should be greater than the current bid');
     }
-    }
+  }
 
   placeBid(
       {required BuildContext context,
@@ -305,15 +303,11 @@ Future<void> _loadUserData() async {
                   child: Column(
                     children: [
                       TextField(
-                        
                         decoration: InputDecoration(
-                          hintText: 'Enter your bid',
-                          border: OutlineInputBorder(),
-                          fillColor: Colors.white,
-                          labelStyle: TextStyle(
-                            color: Colors.white
-                          )
-                        ),
+                            hintText: 'Enter your bid',
+                            border: OutlineInputBorder(),
+                            fillColor: Colors.white,
+                            labelStyle: TextStyle(color: Colors.white)),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           newBid = double.parse(value);
