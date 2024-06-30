@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:notes/model/item_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/services/bid_service.dart';
+import 'package:notes/services/data_service.dart';
 import 'package:notes/widgets/auction_card.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -16,6 +17,10 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   late BidService _bidService;
   late AuthService _authService;
+  late DataService _dataService;
+  late Future<void> _loadUserDataFuture;
+   String _displayName = '';
+  String _profilepic = '';
   VoidCallback onClick = () => {};
 
   @override
@@ -23,6 +28,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
     super.initState();
     _bidService = GetIt.instance.get<BidService>();
     _authService = GetIt.instance.get<AuthService>();
+    _dataService = GetIt.instance.get<DataService>();
+
+    if (_authService.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
+    }
+  }
+    Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
+      _displayName = event.docs[0].data().name!;
+      _profilepic = event.docs[0].data().profilePic;
+    });
   }
 
   @override
@@ -55,7 +77,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           horizontal: 20, vertical: 10),
                       child: BidCard(
                         title: item.name,
-                        bidder: _authService.user!.uid,
+                        bidder: item.lastBid,
                         latestBid: item.price,
                         onClick: () {},
                       ),

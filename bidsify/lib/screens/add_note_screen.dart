@@ -13,6 +13,7 @@ import 'package:notes/model/bid_model.dart';
 import 'package:notes/model/item_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/services/bid_service.dart';
+import 'package:notes/services/data_service.dart';
 import 'package:notes/services/storage_service.dart';
 import 'package:notes/widgets/auction_card.dart';
 
@@ -29,6 +30,10 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   late BidService _bidService;
   late StorageService _storageService;
   late AuthService _authService;
+  late DataService _dataService;
+  late Future<void> _loadUserDataFuture;
+  String _displayName = '';
+  String _profilepic = '';
   late FToast fToast;
   @override
   void initState() {
@@ -36,9 +41,25 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     _bidService = GetIt.instance.get<BidService>();
     _storageService = GetIt.instance.get<StorageService>();
     _authService = GetIt.instance.get<AuthService>();
-    
-  }
+    _dataService = GetIt.instance.get<DataService>();
+if (_authService.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
+    }
 
+
+  }
+Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
+      _displayName = event.docs[0].data().name!;
+      _profilepic = event.docs[0].data().profilePic;
+    });
+  }
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _bidController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
