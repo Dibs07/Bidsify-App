@@ -369,6 +369,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               ],
             ),
           ),
+          SizedBox(height: 20),
           Expanded(
             child: StreamBuilder(
               stream: _bidService.getItems(),
@@ -388,8 +389,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   itemBuilder: (context, index) {
                     ItemModel item = items[index].data();
                     return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
+                      padding: 
+                          const EdgeInsets.fromLTRB(20, 0, 20, 20),
                       child: BidCard(
                         isHistory: false,
                         buttonText: 'Bid',

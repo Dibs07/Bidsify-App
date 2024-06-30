@@ -50,7 +50,7 @@ Future<void> _loadUserData() async {
 
   logout() async {
     await _authService.logout();
-    Navigator.pushNamed(context, '/login');
+    Navigator.popAndPushNamed(context, '/login');
   }
 
   @override

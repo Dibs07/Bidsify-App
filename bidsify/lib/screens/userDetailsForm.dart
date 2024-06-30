@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:animate_gradient/animate_gradient.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/model/user_model.dart';
 import 'package:notes/services/auth_service.dart';
@@ -21,6 +22,7 @@ class UserDetailsScreen extends StatefulWidget {
 class _UserDetailsScreenState extends State<UserDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  bool _isLoading = false;
   bool checkBoxState = false;
   String? _phoneNo;
   String? _location, _name;
@@ -40,143 +42,171 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     _dataService = getIt.get<DataService>();
   }
 
+  void _toggleLoading(bool value) {
+    setState(() {
+      _isLoading = value;
+    });
+  }
+
+
+  Future<void> _handleSubmit() async {
+    try {
+      final form = _formKey.currentState;
+      if (form!.validate()) {
+        form.save();
+        _toggleLoading(true);
+
+        if (pfp == null) {
+          await _dataService.addUser(
+            userProfile: UserModel(
+              uid: _authService.user!.uid,
+              name: _name,
+              email: _authService.user!.email,
+              phoneNumber: _phoneNo,
+              profilePic: 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg',
+            ),
+          );
+          _toggleLoading(false);
+          Navigator.popAndPushNamed(context, '/home_screen');
+        } else {
+          if (_authService.user == null) {
+            throw Exception("User is not authenticated");
+          }
+
+          String? url = await _storageService.uploadFile(
+            file: pfp!,
+            uid: _authService.user!.uid,
+          );
+
+          if (url != null) {
+            await _dataService.addUser(
+              userProfile: UserModel(
+                uid: _authService.user!.uid,
+                name: _name,
+                email: _authService.user!.email,
+                phoneNumber: _phoneNo,
+                profilePic: url,
+              ),
+            );
+            _toggleLoading(false);
+            Navigator.pushNamed(context, '/home_screen');
+          } else {
+            _toggleLoading(false);
+            throw Exception("Failed to upload user profile image");
+          }
+        }
+      } else {
+        throw Exception("Failed to register user");
+      }
+    } catch (e) {
+      _toggleLoading(false);
+      print(e);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimateGradient(
-        primaryBeginGeometry: const AlignmentDirectional(0, 1),
-        primaryEndGeometry: const AlignmentDirectional(0, 2),
-        secondaryBeginGeometry: const AlignmentDirectional(2, 0),
-        secondaryEndGeometry: const AlignmentDirectional(0, -0.8),
-        textDirectionForGeometry: TextDirection.rtl,
-        primaryColors: kPrimaryGradientColors,
-        secondaryColors: kSecondaryGradientColors,
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'Additional Details',
-                        style: kHeadingTextStyle.copyWith(fontSize: 55),
-                      ),
-                    ),
-                    Center(
-                      child: GestureDetector(
-                        onTap: () async {
-                          File? pf = await _mediaService.getImage();
-                          if (pf != null) {
-                            setState(() {
-                              pfp = pf;
-                            });
-                          }
-                        },
-                        child: CircleAvatar(
-                          radius: MediaQuery.sizeOf(context).width * 0.15,
-                          backgroundImage: pfp != null
-                              ? FileImage(pfp!)
-                              : NetworkImage('https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg')
-                                  as ImageProvider,
+      body: ModalProgressHUD(
+        inAsyncCall: _isLoading,
+        child: AnimateGradient(
+          primaryBeginGeometry: const AlignmentDirectional(0, 1),
+          primaryEndGeometry: const AlignmentDirectional(0, 2),
+          secondaryBeginGeometry: const AlignmentDirectional(2, 0),
+          secondaryEndGeometry: const AlignmentDirectional(0, -0.8),
+          textDirectionForGeometry: TextDirection.rtl,
+          primaryColors: kPrimaryGradientColors,
+          secondaryColors: kSecondaryGradientColors,
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Additional Details',
+                          style: kHeadingTextStyle.copyWith(fontSize: 55),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextFormField(
-                        validator: (val) =>
-                            val!.length < 6 ? 'Enter a valid name' : null,
-                        onSaved: (val) => _name = val,
-                        style: kInputTextFieldStyle,
-                        decoration: kTextFieldDecoration.copyWith(
-                          hintText: 'Enter your username',
+                      Center(
+                        child: GestureDetector(
+                          onTap: () async {
+                            File? pf = await _mediaService.getImage();
+                            if (pf != null) {
+                              setState(() {
+                                pfp = pf;
+                              });
+                            }
+                          },
+                          child: CircleAvatar(
+                            radius: MediaQuery.sizeOf(context).width * 0.15,
+                            backgroundImage: pfp != null
+                                ? FileImage(pfp!)
+                                : NetworkImage('https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg')
+                                    as ImageProvider,
+                          ),
                         ),
-                        keyboardType: TextInputType.emailAddress,
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextFormField(
-                        validator: (val) =>
-                            val!.length != 10 ? 'Enter a valid mobile no' : null,
-                        onSaved: (val) => _phoneNo = val,
-                        style: kInputTextFieldStyle,
-                        decoration: kTextFieldDecoration.copyWith(
-                          hintText: 'Enter your mobile no',
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextFormField(
+                          validator: (val) =>
+                              val!.length < 6 ? 'Enter a valid name' : null,
+                          onSaved: (val) => _name = val,
+                          style: kInputTextFieldStyle,
+                          decoration: kTextFieldDecoration.copyWith(
+                            hintText: 'Enter your username',
+                          ),
+                          keyboardType: TextInputType.emailAddress,
                         ),
-                        keyboardType: TextInputType.phone,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextFormField(
+                          validator: (val) =>
+                              val!.length != 10 ? 'Enter a valid mobile no' : null,
+                          onSaved: (val) => _phoneNo = val,
+                          style: kInputTextFieldStyle,
+                          decoration: kTextFieldDecoration.copyWith(
+                            hintText: 'Enter your mobile no',
+                          ),
+                          keyboardType: TextInputType.phone,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: myButton(
+                const SizedBox(height: 20),
+                Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // Your form fields go here
+                myButton(
                   height: 50,
                   width: double.infinity,
                   text: 'Continue',
-                  onClick: () async {
-                    try {
-                      final form = _formKey.currentState;
-                      if (form!.validate()) {
-                        form.save();
-                        if (pfp == null) {
-                          await _dataService.addUser(
-                            userProfile: UserModel(
-                              uid: _authService.user!.uid,
-                              name: _name,
-                              email: _authService.user!.email,
-                              phoneNumber: _phoneNo,
-                              profilePic: 'https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg',
-                            ),
-                          );
-                          Navigator.pushNamed(context, '/home_screen');
-                        }
-                        if (_authService.user == null) {
-                          throw Exception("User is not authenticated");
-                        }
-
-                        String? url = await _storageService.uploadFile(
-                          file: pfp!,
-                          uid: _authService.user!.uid,
-                        );
-
-                        if (url != null) {
-                          await _dataService.addUser(
-                            userProfile: UserModel(
-                              uid: _authService.user!.uid,
-                              name: _name,
-                              email: _authService.user!.email,
-                              phoneNumber: _phoneNo,
-                              profilePic: url,
-                            ),
-                          );
-                          Navigator.pushNamed(context, '/home_screen');
-                        } else {
-                          throw Exception("Failed to upload user profile image");
-                        }
-                      } else {
-                        throw Exception("Failed to register user");
-                      }
-                    } catch (e) {
-                      print(e);
-                    }
-                  },
+                  onClick: _handleSubmit,
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+        ),
+              ],
+            ),
           ),
         ),
       ),

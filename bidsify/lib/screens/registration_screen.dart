@@ -54,12 +54,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         _showToast("Password does not match", false);
         return;
       }
-      bool res = await _authService.register(_email!, _password!);
-      if (res) {
+      try {
+        bool res = await _authService.register(_email!, _password!);
         _showToast("Account Created", true);
-        Navigator.popAndPushNamed(context, '/user_details_form');
-      } else {
-        _showToast("Failed to Signin", false);
+        Navigator.pushNamed(context, '/user_details_form');
+      } catch (e) {
+        _showToast('Failed to Signin', false);
       }
     } else {
       _showToast("Invalid Credentials", false);
@@ -164,60 +164,60 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FittedBox(
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 2),
-                          Checkbox(
-                              value: checkBoxState,
-                              onChanged: (value) {
-                                setState(() {
-                                  checkBoxState = !checkBoxState;
-                                });
-                              }),
-                          const Text(
-                            'Remember Me',
-                            style: TextStyle(color: Colors.white),
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: myButton(
-                      height: 50,
-                      width: double.infinity,
-                      text: 'Continue',
-                      onClick: () {
-                        _signUp();
-                      }),
-                ),
-                Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Already have an account?',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.popAndPushNamed(context, '/login');
-                          },
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(color: kSecondaryColor),
-                          ),
-                        ),
-                      ],
-                    ))
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     FittedBox(
+                //       child: Row(
+                //         children: [
+                //           const SizedBox(width: 2),
+                //           Checkbox(
+                //               value: checkBoxState,
+                //               onChanged: (value) {
+                //                 setState(() {
+                //                   checkBoxState = !checkBoxState;
+                //                 });
+                //               }),
+                //           const Text(
+                //             'Remember Me',
+                //             style: TextStyle(color: Colors.white),
+                //           )
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // const SizedBox(height: 20),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                //   child: myButton(
+                //       height: 50,
+                //       width: double.infinity,
+                //       text: 'Continue',
+                //       onClick: () {
+                //         _signUp();
+                //       }),
+                // ),
+                // Padding(
+                //     padding: const EdgeInsets.all(20.0),
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         const Text(
+                //           'Already have an account?',
+                //           style: TextStyle(color: Colors.white),
+                //         ),
+                //         TextButton(
+                //           onPressed: () {
+                //             Navigator.popAndPushNamed(context, '/login');
+                //           },
+                //           child: const Text(
+                //             'Login',
+                //             style: TextStyle(color: kSecondaryColor),
+                //           ),
+                //         ),
+                //       ],
+                //     ))
               ],
             ),
           )),

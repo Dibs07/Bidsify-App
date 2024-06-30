@@ -45,13 +45,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final form = _formKey.currentState;
     if (form!.validate()) {
       form.save();
-      bool res = await _authService.login(email!, password!);
-      if (res) {
+      
+      try {
+        bool res = await _authService.login(email!, password!);
         _showToast("Login successful", true);
         Navigator.popAndPushNamed(context, '/home_screen');
-      } else {
+      } catch (e) {
         _showToast("Failed to Login", false);
       }
+      
     } else {
       _showToast("Invalid Credentials", false);
     }
@@ -147,36 +149,36 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FittedBox(
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 2),
-                          Checkbox(
-                              value: checkBoxState,
-                              onChanged: (value) {
-                                setState(() {
-                                  checkBoxState = !checkBoxState;
-                                });
-                              }),
-                          const Text(
-                            'Remember Me',
-                            style: TextStyle(color: Colors.white),
-                          )
-                        ],
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 18.0),
-                      child: Text(
-                        'Forgot Password',
-                        style: TextStyle(color: kSecondaryColor),
-                      ),
-                    )
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     FittedBox(
+                //       child: Row(
+                //         children: [
+                //           const SizedBox(width: 2),
+                //           Checkbox(
+                //               value: checkBoxState,
+                //               onChanged: (value) {
+                //                 setState(() {
+                //                   checkBoxState = !checkBoxState;
+                //                 });
+                //               }),
+                //           const Text(
+                //             'Remember Me',
+                //             style: TextStyle(color: Colors.white),
+                //           )
+                //         ],
+                //       ),
+                //     ),
+                //     const Padding(
+                //       padding: EdgeInsets.only(right: 18.0),
+                //       child: Text(
+                //         'Forgot Password',
+                //         style: TextStyle(color: kSecondaryColor),
+                //       ),
+                //     )
+                //   ],
+                // ),
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -71,7 +71,8 @@ class BidCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                     child: Text(
-                      'Latest Bid: $latestBid',
+                      latestBid.toString().length > 5 ? 'Your Bid: ' + latestBid.toString().substring(0, 5) + '...'
+                      : 'Your Bid: $latestBid',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -105,7 +106,7 @@ class BidCard extends StatelessWidget {
                       Container(
                         width: 195,
                         child: Text(
-                          '${transactionId?.substring(0, 10)}',
+                          '',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
