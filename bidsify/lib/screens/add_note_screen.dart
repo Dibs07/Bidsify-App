@@ -389,9 +389,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           horizontal: 20, vertical: 10),
                       child: BidCard(
                         isHistory: false,
-                        buttonText: 'Create Bid',
+                        buttonText: 'Bid',
                         title: item.name,
-                        bidder: _authService.user!.uid,
+                        bidder: _displayName,
                         latestBid: item.price,
                         onClick: () => placeBid(
                             bidId: item.uid, context: context, item: item),

@@ -16,8 +16,9 @@ class _HomeScreenState extends State<HomeScreen> {
   late AuthService _authService;
 late DataService _dataService;
 
-  late String _displayName;
-  late String _profilepic;
+  late Future<void> _loadUserDataFuture;
+   String _displayName = '';
+  String _profilepic = '';
   @override
   void initState() {
     super.initState();
@@ -26,8 +27,22 @@ _dataService = GetIt.instance.get<DataService>();
     if (_authService.user == null) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     }
+    if (_authService.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
+    }
   }
-
+Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
+      _displayName = event.docs[0].data().name!;
+      _profilepic = event.docs[0].data().profilePic;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +57,7 @@ _dataService = GetIt.instance.get<DataService>();
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
                 child: Text(
-                  'Welcome,${_authService.user!.displayName}',
+                  'Welcome,${_displayName}',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,
