@@ -161,6 +161,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           decoration: InputDecoration(
                             hintText: 'Title',
                             border: OutlineInputBorder(),
+                            labelStyle: TextStyle(
+                              color: Colors.white,
+                            )
                           ),
                           keyboardType: TextInputType.name,
                           controller: _titleController,
@@ -177,6 +180,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           decoration: InputDecoration(
                             hintText: 'Description',
                             border: OutlineInputBorder(),
+                            labelStyle: TextStyle(
+                              color: Colors.white,
+                            )
                           ),
                           keyboardType: TextInputType.text,
                           controller: _descriptionController,
@@ -193,6 +199,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           decoration: InputDecoration(
                             hintText: 'Enter Initial Bid',
                             border: OutlineInputBorder(),
+                            labelStyle: TextStyle(
+                              color: Colors.white,
+                            )
                           ),
                           keyboardType: TextInputType.number,
                           controller: _bidController,
@@ -276,6 +285,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           hintText: 'Enter your bid',
                           border: OutlineInputBorder(),
                           fillColor: Colors.white,
+                          labelStyle: TextStyle(
+                            color: Colors.white
+                          )
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
