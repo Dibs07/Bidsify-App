@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/model/bid_model.dart';
-import 'package:notes/model/item_model.dart';
 import 'package:notes/model/user_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/constants/constants.dart';
@@ -21,8 +20,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late AuthService _authService;
   late DataService _dataService;
   late BidService _bidService;
-  late String _displayName;
-  late String _profilepic;
+  late Future<void> _loadUserDataFuture;
+  String _displayName = '';
+  String _profilepic = '';
   @override
   void initState() {
     super.initState();
@@ -30,17 +30,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _dataService = GetIt.instance.get<DataService>();
     _bidService = GetIt.instance.get<BidService>();
     if (_authService.user == null) {
-      Navigator.pushNamed(context, '/login');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
     }
-    Stream<QuerySnapshot<UserModel>> userModel =
-        _dataService.getUser();
-    userModel.listen((event) {
+  }
+
+  Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
       _displayName = event.docs[0].data().name!;
       _profilepic = event.docs[0].data().profilePic;
     });
-    print(_profilepic);
   }
-
 
   logout() async {
     await _authService.logout();
@@ -69,51 +74,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
         backgroundColor: kMobileBackgroundColor,
       ),
-      body: Padding(
-        padding: EdgeInsets.only(top: 100.0),
-        child: Column(
-          children: [
-            Center(
-              child: Image(
-                image: NetworkImage(_profilepic),
-                height: 100.0,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 20.0),
-              child: Text(
-                "${_displayName}",
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20.0,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 15.0),
-              child: Text(
-                "${_authService.user!.email}",
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 18.0,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-           Expanded(
-            child: StreamBuilder(
-              stream: _bidService.getBidsbyownerID(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
+      body: FutureBuilder<void>(
+        future: _loadUserDataFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('No items found'));
-                }
+          return Padding(
+            padding: EdgeInsets.only(top: 100.0),
+            child: Column(
+              children: [
+                Center(
+                  child: Image(
+                    image: NetworkImage(_profilepic),
+                    height: 100.0,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 20.0),
+                  child: Text(
+                    _displayName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 15.0),
+                  child: Text(
+                    _authService.user!.email!,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18.0,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: StreamBuilder(
+                    stream: _bidService.getBidsbyownerID(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      }
 
-                final items = snapshot.data!.docs;
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Center(child: Text('No items found'));
+                      }
+
+                      final items = snapshot.data!.docs;
 
                 return ListView.builder(
                   itemCount: items.length,

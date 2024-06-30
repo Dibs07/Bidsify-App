@@ -13,6 +13,7 @@ import 'package:notes/model/bid_model.dart';
 import 'package:notes/model/item_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/services/bid_service.dart';
+import 'package:notes/services/data_service.dart';
 import 'package:notes/services/storage_service.dart';
 import 'package:notes/widgets/auction_card.dart';
 
@@ -29,6 +30,10 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   late BidService _bidService;
   late StorageService _storageService;
   late AuthService _authService;
+  late DataService _dataService;
+  late Future<void> _loadUserDataFuture;
+  String _displayName = '';
+  String _profilepic = '';
   late FToast fToast;
   @override
   void initState() {
@@ -36,7 +41,23 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     _bidService = GetIt.instance.get<BidService>();
     _storageService = GetIt.instance.get<StorageService>();
     _authService = GetIt.instance.get<AuthService>();
-    
+    _dataService = GetIt.instance.get<DataService>();
+    if (_authService.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
+      _displayName = event.docs[0].data().name!;
+      _profilepic = event.docs[0].data().profilePic;
+    });
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -81,7 +102,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             descrription: description,
             ownerId: _authService.user!.uid,
             price: double.parse(bid),
-            lastBid: '',
+            lastBid: _displayName,
             bids: [],
             itemPic: url,
           ),
@@ -162,12 +183,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         TextFormField(
                           style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Title',
-                            border: OutlineInputBorder(),
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                            )
-                          ),
+                              hintText: 'Title',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.name,
                           controller: _titleController,
                           validator: (value) {
@@ -181,12 +201,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         TextFormField(
                           style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Description',
-                            border: OutlineInputBorder(),
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                            )
-                          ),
+                              hintText: 'Description',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.text,
                           controller: _descriptionController,
                           validator: (value) {
@@ -200,12 +219,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         TextFormField(
                           style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Enter Initial Bid',
-                            border: OutlineInputBorder(),
-                            labelStyle: TextStyle(
-                              color: Colors.white,
-                            )
-                          ),
+                              hintText: 'Enter Initial Bid',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.number,
                           controller: _bidController,
                           validator: (value) {
@@ -237,19 +255,20 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     );
   }
 
- late double newBid;
+  late double newBid;
 
   _onBidPlaced({required String bidId, required ItemModel item}) async {
     if (newBid > item.price!) {
-      BidModel newbid =BidModel(
-              uid: bidId + DateTime.now().toString(),
-              maxBid: newBid,
-              isEnded: false,
-              lastBidder: _authService.user!.uid,
-              item: item.name,);
+      BidModel newbid = BidModel(
+        uid: bidId + DateTime.now().toString(),
+        maxBid: newBid,
+        isEnded: false,
+        lastBidder: _displayName,
+        item: item.name,
+      );
       await _bidService.createbid(bid: newbid);
       item.price = newBid;
-      item.lastBid = _authService.user!.uid;
+      item.lastBid = _displayName;
       item.bids.add(newbid);
       if (await _bidService.updateItem(item: item)) {
         print('Bid updated successfully');
@@ -259,7 +278,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     } else {
       print('Bid should be greater than the current bid');
     }
-    }
+  }
 
   placeBid(
       {required BuildContext context,
@@ -284,15 +303,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   child: Column(
                     children: [
                       TextField(
-                        
                         decoration: InputDecoration(
-                          hintText: 'Enter your bid',
-                          border: OutlineInputBorder(),
-                          fillColor: Colors.white,
-                          labelStyle: TextStyle(
-                            color: Colors.white
-                          )
-                        ),
+                            hintText: 'Enter your bid',
+                            border: OutlineInputBorder(),
+                            fillColor: Colors.white,
+                            labelStyle: TextStyle(color: Colors.white)),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           newBid = double.parse(value);
