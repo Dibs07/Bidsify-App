@@ -83,7 +83,8 @@ class BidCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 19, vertical: 8),
                     child: Text(
-                      'Your Bid: $latestBid',
+                      latestBid.toString().length > 5 ? 'Your Bid: ' + latestBid.toString().substring(0, 5) + '...'
+                      : 'Your Bid: $latestBid',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
