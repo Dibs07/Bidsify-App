@@ -67,19 +67,10 @@ class BidService {
         as Stream<List<BidModel>>;
   }
 
-  Future<bool> updateBid(
-      {required String bidId, required double bidValue}) async {
+  Future<bool> updateItem ({required ItemModel item}) async {
     try {
-      final docRef = bids!.doc(bidId);
-      final docSnapshot = await docRef.get();
-
-      if (docSnapshot.exists) {
-        await docRef.update({'maxBid': bidValue});
-        return true;
-      } else {
-        print('Bid document not found: $bidId');
-        return false;
-      }
+      await items?.doc(item.uid).update(item.toMap());
+      return true;
     } catch (e) {
       print(e);
       return false;
