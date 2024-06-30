@@ -6,7 +6,8 @@ class ItemModel {
   final String descrription;
   final String ownerId;
   final String? itemPic;
-  final double price;
+  late double? price;
+  late String lastBid;
   final List<BidModel> bids;
 
   ItemModel({
@@ -16,6 +17,7 @@ class ItemModel {
     required this.ownerId,
     required this.price,
     required this.bids,
+    required this.lastBid,
     this.itemPic,
   });
 
@@ -28,6 +30,7 @@ class ItemModel {
       'itemPic': itemPic,
       'price': price,
       'bids': bids,
+      'lastBid': lastBid,
     };
   }
 
@@ -39,6 +42,7 @@ class ItemModel {
       ownerId: map['ownerId'] ?? "",
       itemPic: map['itemPic'] ?? "",
       price: map['price'] ?? 0.0,
+      lastBid: map['lastBid'] ?? "",
        bids: (map['bids'] as List<dynamic>)
           .map((bid) => BidModel.fromMap(bid as Map<String, dynamic>))
           .toList(),

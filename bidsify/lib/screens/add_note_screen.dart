@@ -78,6 +78,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             descrription: description,
             ownerId: _authService.user!.uid,
             price: double.parse(bid),
+            lastBid: '',
             bids: [],
             itemPic: url,
           ),
@@ -224,33 +225,28 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     );
   }
 
-  var newBid;
+ late double newBid;
 
-  _onBidPlaced(
-      {required String newValue,
-      required String bidId,
-      required ItemModel item}) async {
-    if (newBid != null && newValue.isNotEmpty) {
-      bool res = await _bidService.updateBid(
-        bidId: bidId,
-        bidValue: double.parse(newValue),
-      );
-      if (res) {
-        BidModel bid = BidModel(
-          uid: bidId + DateTime.now().toString(),
-          maxBid: double.parse(newValue),
-          isEnded: false,
-          lastBidder: _authService.user!.uid,
-          item: item,
-        );
-        await _bidService.createbid(bid: bid);
+  _onBidPlaced({required String bidId, required ItemModel item}) async {
+    if (newBid > item.price!) {
+      await _bidService.createbid(
+          bid: BidModel(
+              uid: bidId + DateTime.now().toString(),
+              maxBid: 0.0,
+              isEnded: false,
+              lastBidder: '',
+              item: item));
+      item.price = newBid;
+      item.lastBid = _authService.user!.uid;
+      if (await _bidService.updateItem(item: item)) {
+        print('Bid updated successfully');
       } else {
         print('Failed to update bid');
       }
     } else {
-      print('New bid is null or new value is empty');
+      print('Bid should be greater than the current bid');
     }
-  }
+    }
 
   placeBid(
       {required BuildContext context,
@@ -282,7 +278,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         ),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
-                          newBid = value;
+                          newBid = double.parse(value);
                         },
                       ),
                       SizedBox(height: 20),
@@ -290,8 +286,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           width: double.infinity,
                           height: 50,
                           text: 'Save',
-                          onClick: () => _onBidPlaced(
-                              bidId: bidId, newValue: newBid, item: item))
+                          onClick: () => _onBidPlaced(bidId: bidId, item: item))
                     ],
                   ),
                 ),

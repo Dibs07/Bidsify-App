@@ -27,7 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     Stream<QuerySnapshot<UserModel>> userModel =
         _dataService.getUser();
-        _displayName = userModel!.name;
+        _displayName = "john doe";
   }
 
   var bids = ["Bid1", "Bid2", "Bid3", "Bid4"];

@@ -5,11 +5,11 @@ import 'package:notes/model/user_model.dart';
 class BidCard extends StatelessWidget {
   final String title;
   final String bidder;
-  final double latestBid;
+  late double? latestBid;
 
   final VoidCallback onClick;
   final String? transactionId;
-  const BidCard({
+   BidCard({
     super.key,
     required this.title,
     required this.bidder,
