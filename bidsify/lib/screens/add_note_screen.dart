@@ -157,7 +157,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Title',
                             border: OutlineInputBorder(),
@@ -176,7 +176,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Description',
                             border: OutlineInputBorder(),
@@ -195,7 +195,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Enter Initial Bid',
                             border: OutlineInputBorder(),
@@ -281,6 +281,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   child: Column(
                     children: [
                       TextField(
+                        
                         decoration: InputDecoration(
                           hintText: 'Enter your bid',
                           border: OutlineInputBorder(),
