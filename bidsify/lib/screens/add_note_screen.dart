@@ -264,6 +264,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         maxBid: newBid,
         isEnded: false,
         lastBidder: _displayName,
+        lastBidderId: _authService.user!.uid,
         item: item.name,
       );
       await _bidService.createbid(bid: newbid);
