@@ -22,6 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late DataService _dataService;
   late BidService _bidService;
   late String _displayName;
+  late String _profilepic;
   @override
   void initState() {
     super.initState();
@@ -33,7 +34,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     Stream<QuerySnapshot<UserModel>> userModel =
         _dataService.getUser();
-        _displayName = "john doe";
+    userModel.listen((event) {
+      _displayName = event.docs[0].data().name!;
+      _profilepic = event.docs[0].data().profilePic;
+    });
+    print(_profilepic);
   }
 
 
@@ -70,14 +75,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Center(
               child: Image(
-                image: AssetImage('assets/default-profile.png'),
+                image: NetworkImage(_profilepic),
                 height: 100.0,
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 20.0),
               child: Text(
-                "${_authService.user!.displayName}",
+                "${_displayName}",
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   fontSize: 20.0,
