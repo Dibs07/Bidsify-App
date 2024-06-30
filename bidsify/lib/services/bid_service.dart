@@ -43,12 +43,12 @@ class BidService {
       print(e);
     }
   }
-  Stream<QuerySnapshot<ItemModel>> getItems(
-      ) {
-    return items!.where('ownerId', isNotEqualTo: _authService.user!.uid).snapshots()
-        as Stream<QuerySnapshot<ItemModel>>;
-  }
 
+  Stream<QuerySnapshot<ItemModel>> getItems() {
+    return items!
+        .where('ownerId', isNotEqualTo: _authService.user!.uid)
+        .snapshots() as Stream<QuerySnapshot<ItemModel>>;
+  }
 
   Stream<QuerySnapshot<ItemModel>> getItemsbyownerid(
       {required String ownerId}) {
@@ -67,12 +67,22 @@ class BidService {
         as Stream<List<BidModel>>;
   }
 
-  Future<void> updateBid(
+  Future<bool> updateBid(
       {required String bidId, required double bidValue}) async {
     try {
-      await bids!.doc(bidId).update({'maxBid': bidValue});
+      final docRef = bids!.doc(bidId);
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        await docRef.update({'maxBid': bidValue});
+        return true;
+      } else {
+        print('Bid document not found: $bidId');
+        return false;
+      }
     } catch (e) {
       print(e);
+      return false;
     }
   }
 }

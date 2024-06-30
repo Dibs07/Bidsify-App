@@ -18,6 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
+    if (_authService.user == null) {
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    }
   }
 
   @override
@@ -34,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
                 child: Text(
-                  'Welcome,Pratyush',
+                  'Welcome,${_authService.user!.displayName}',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,

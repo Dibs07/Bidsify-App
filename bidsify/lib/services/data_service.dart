@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/model/chat_model.dart';
@@ -46,14 +44,21 @@ class DataService {
         .snapshots() as Stream<QuerySnapshot<UserModel>>;
   }
 
+  Stream<QuerySnapshot<UserModel>> getUser() {
+    return _users
+        ?.where('uid', isEqualTo: _authService.user!.uid)
+        .snapshots() as Stream<QuerySnapshot<UserModel>>;
+  }
+
   Future<bool> checkChatexists(String uid1, String uid2) async {
     String chatId = generateChatId(uid1: uid1, uid2: uid2);
-   final res = await _chats?.doc(chatId).get();
-   if(res!=null){
-     return res.exists;
-   }
+    final res = await _chats?.doc(chatId).get();
+    if (res != null) {
+      return res.exists;
+    }
     return false;
   }
+
   Future<void> createChat(String uid1, String uid2) async {
     String chatId = generateChatId(uid1: uid1, uid2: uid2);
     final chat = Chat(
@@ -64,7 +69,7 @@ class DataService {
     await _chats!.doc(chatId).set(chat);
   }
 
-  Future<void> addMessage(String uid1,String uid2, Message message) async {
+  Future<void> addMessage(String uid1, String uid2, Message message) async {
     String chatId = generateChatId(uid1: uid1, uid2: uid2);
     await _chats!.doc(chatId).update({
       'messages': FieldValue.arrayUnion([message.toJson()])
@@ -73,9 +78,6 @@ class DataService {
 
   Stream<DocumentSnapshot<Chat>> getChats(String uid1, String uid2) {
     String chatId = generateChatId(uid1: uid1, uid2: uid2);
-    return _chats!
-        .doc(chatId)
-        .snapshots() as Stream<DocumentSnapshot<Chat>>;
+    return _chats!.doc(chatId).snapshots() as Stream<DocumentSnapshot<Chat>>;
   }
 }
-

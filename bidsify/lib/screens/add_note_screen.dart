@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/model/bid_model.dart';
 import 'package:notes/model/item_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/services/bid_service.dart';
@@ -225,64 +226,89 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
   var newBid;
 
-  _onBidPlaced() {
-    if (newBid != null) {
-      // do
-
+  _onBidPlaced(
+      {required String newValue,
+      required String bidId,
+      required ItemModel item}) async {
+    if (newBid != null && newValue.isNotEmpty) {
+      bool res = await _bidService.updateBid(
+        bidId: bidId,
+        bidValue: double.parse(newValue),
+      );
+      if (res) {
+        BidModel bid = BidModel(
+          uid: bidId + DateTime.now().toString(),
+          maxBid: double.parse(newValue),
+          isEnded: false,
+          lastBidder: _authService.user!.uid,
+          item: item,
+        );
+        await _bidService.createbid(bid: bid);
+      } else {
+        print('Failed to update bid');
+      }
+    } else {
+      print('New bid is null or new value is empty');
     }
   }
 
-  placeBid() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: Text(
-                'Place your Bid Here',
-                style: kHeadingTextStyle.copyWith(fontSize: 35),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              content: SizedBox(
-                height: 130,
-                child: Column(
-                  children: [
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Enter your bid',
-                        border: OutlineInputBorder(),
-                        fillColor: Colors.white,
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        newBid = value;
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    myButton(
-                        width: double.infinity,
-                        height: 50,
-                        text: 'Save',
-                        onClick: _onBidPlaced)
-                  ],
+  placeBid(
+      {required BuildContext context,
+      required String bidId,
+      required ItemModel item}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return AlertDialog(
+                title: Text(
+                  'Place your Bid Here',
+                  style: kHeadingTextStyle.copyWith(fontSize: 35),
                 ),
-              ),
-              // actions: [
-              //   TextButton(
-              //     child: Text('Close'),
-              //     onPressed: () {
-              //       Navigator.of(context).pop();
-              //     },
-              //   ),
-              // ],
-            );
-          },
-        );
-      },
-    );
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                content: SizedBox(
+                  height: 130,
+                  child: Column(
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Enter your bid',
+                          border: OutlineInputBorder(),
+                          fillColor: Colors.white,
+                        ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          newBid = value;
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      myButton(
+                          width: double.infinity,
+                          height: 50,
+                          text: 'Save',
+                          onClick: () => _onBidPlaced(
+                              bidId: bidId, newValue: newBid, item: item))
+                    ],
+                  ),
+                ),
+                // actions: [
+                //   TextButton(
+                //     child: Text('Close'),
+                //     onPressed: () {
+                //       Navigator.of(context).pop();
+                //     },
+                //   ),
+                // ],
+              );
+            },
+          );
+        },
+      );
+    });
   }
 
   @override
@@ -316,29 +342,29 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             child: StreamBuilder(
               stream: _bidService.getItems(),
               builder: (context, snapshot) {
-            
                 if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
-            
+
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return Center(child: Text('No items found'));
                 }
-            
+
                 final items = snapshot.data!.docs;
-                    
-            
+
                 return ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     ItemModel item = items[index].data();
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       child: BidCard(
                         title: item.name,
                         bidder: _authService.user!.uid,
                         latestBid: item.price,
-                        onClick: placeBid,
+                        onClick: () => placeBid(
+                            bidId: item.uid, context: context, item: item),
                       ),
                     );
                   },

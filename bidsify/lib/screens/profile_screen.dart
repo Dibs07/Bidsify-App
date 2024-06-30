@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:notes/model/user_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/services/data_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,23 +15,34 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late AuthService _authService;
+  late DataService _dataService;
+  late String _displayName;
   @override
   void initState() {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
+    _dataService = GetIt.instance.get<DataService>();
+    if (_authService.user == null) {
+      Navigator.pushNamed(context, '/login');
+    }
+    Stream<QuerySnapshot<UserModel>> userModel =
+        _dataService.getUser();
+        _displayName = userModel!.name;
   }
 
   var bids = ["Bid1", "Bid2", "Bid3", "Bid4"];
 
+  logout() async {
+    await _authService.logout();
+    Navigator.pushNamed(context, '/login');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
           TextButton(
-            // style: ButtonStyle(
-            //   backgroundColor:  Colors.black,
-            // ),
-
             onPressed: logout,
             child: Padding(
               padding: EdgeInsets.only(right: 10.0, top: 5.0),
@@ -48,7 +62,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Padding(
         padding: EdgeInsets.only(top: 100.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Center(
               child: Image(
@@ -59,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Padding(
               padding: EdgeInsets.only(top: 20.0),
               child: Text(
-                "Dibakar",
+                "${_authService.user!.displayName}",
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   fontSize: 20.0,
@@ -70,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Padding(
               padding: EdgeInsets.only(top: 15.0),
               child: Text(
-                "Email",
+                "${_authService.user!.email}",
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 18.0,
@@ -78,35 +91,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            Container(
+            Expanded(
               child: ListView.builder(
-                  itemCount: bids.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            bids[index],
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18.0,
-                              color: Colors.white,
-                            ),
+                itemCount: bids.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          bids[index],
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18.0,
+                            color: Colors.white,
                           ),
-                        ],
-                      ),
-                    );
-                  }),
-            )
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  logout() async {
-    await _authService.logout();
-    Navigator.pushNamed(context, '/login');
   }
 }
