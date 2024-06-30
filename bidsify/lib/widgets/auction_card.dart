@@ -6,7 +6,8 @@ class BidCard extends StatelessWidget {
   final String title;
   final String bidder;
   late double? latestBid;
-
+  final String buttonText;
+  final bool isHistory;
   final VoidCallback onClick;
   final String? transactionId;
    BidCard({
@@ -14,8 +15,9 @@ class BidCard extends StatelessWidget {
     required this.title,
     required this.bidder,
     required this.latestBid,
-
+    required this.buttonText,
     required this.onClick,
+    required this.isHistory,
     this.transactionId,
   });
 
@@ -54,7 +56,7 @@ class BidCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  '${bidder}',
+                  'By ${bidder}',
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -111,18 +113,18 @@ class BidCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 24),
-                      myButton(
+                      !isHistory ? myButton(
                         height: 50,
                         width: 120,
-                        text: 'View',
+                        text: buttonText,
                         onClick: onClick,
-                      ),
+                      ) : Container(),
                     ],
                   )
                 : myButton(
                     height: 50,
                     width: 120,
-                    text: 'View',
+                    text: buttonText,
                     onClick: onClick,
                   ),
           ),

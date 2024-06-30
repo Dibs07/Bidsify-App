@@ -23,6 +23,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String _profilepic = '';
   VoidCallback onClick = () => {};
 
+
+  endBid() {
+    //
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -76,10 +82,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                       child: BidCard(
+                        isHistory: false,
+                        buttonText: 'End Bid',
                         title: item.name,
                         bidder: item.lastBid,
                         latestBid: item.price,
-                        onClick: () {},
+                        onClick: endBid,
                       ),
                     );
                   },
