@@ -70,21 +70,23 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                         style: kHeadingTextStyle.copyWith(fontSize: 55),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        File? pf = await _mediaService.getImage();
-                        if (pf != null) {
-                          setState(() {
-                            pfp = pf;
-                          });
-                        }
-                      },
-                      child: CircleAvatar(
-                        radius: MediaQuery.sizeOf(context).width * 0.15,
-                        backgroundImage: pfp != null
-                            ? FileImage(pfp!)
-                            : NetworkImage('https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg')
-                                as ImageProvider,
+                    Center(
+                      child: GestureDetector(
+                        onTap: () async {
+                          File? pf = await _mediaService.getImage();
+                          if (pf != null) {
+                            setState(() {
+                              pfp = pf;
+                            });
+                          }
+                        },
+                        child: CircleAvatar(
+                          radius: MediaQuery.sizeOf(context).width * 0.15,
+                          backgroundImage: pfp != null
+                              ? FileImage(pfp!)
+                              : NetworkImage('https://t3.ftcdn.net/jpg/05/16/27/58/360_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg')
+                                  as ImageProvider,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
