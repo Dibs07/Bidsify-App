@@ -66,6 +66,13 @@ class BidService {
     return bids!.where('lastBidderId', isEqualTo: _authService.user!.uid).snapshots()
         as Stream<QuerySnapshot<BidModel>>;
   }
+  Future<void> endBid({required BidModel bid}) async {
+    try {
+      await bids?.doc(bid.uid).update(bid.toMap());
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Future<bool> updateItem ({required ItemModel item}) async {
     try {

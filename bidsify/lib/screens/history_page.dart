@@ -24,10 +24,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   VoidCallback onClick = () => {};
 
 
-  endBid() {
-    //
-  }
-
+ 
 
   @override
   void initState() {
@@ -51,6 +48,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
       _displayName = event.docs[0].data().name!;
       _profilepic = event.docs[0].data().profilePic;
     });
+  }
+ endBid() {
+
+    
   }
 
   @override

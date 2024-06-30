@@ -70,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: kMobileBackgroundColor,
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: 100.0),
+        padding: EdgeInsets.only(top: 20.0),
         child: Column(
           children: [
             Center(
