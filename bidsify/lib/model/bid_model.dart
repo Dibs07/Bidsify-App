@@ -5,7 +5,7 @@ class BidModel {
   final double maxBid;
   final bool isEnded;
   final String lastBidder;
-  final ItemModel item;
+  final String item;
 
 
   BidModel({
@@ -32,12 +32,11 @@ class BidModel {
   factory BidModel.fromMap(Map<String, dynamic> map) {
     return BidModel(
       uid: map['uid'] ?? '',
-
       maxBid: map['maxBid'] ?? '',
       isEnded: map['isEnded'] ?? false,
       lastBidder: map['lastBidder'] ?? '',
       item: map['item'] ?? '',
-
     );
   }
+
 }

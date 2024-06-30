@@ -229,15 +229,16 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
 
   _onBidPlaced({required String bidId, required ItemModel item}) async {
     if (newBid > item.price!) {
-      await _bidService.createbid(
-          bid: BidModel(
+      BidModel newbid =BidModel(
               uid: bidId + DateTime.now().toString(),
-              maxBid: 0.0,
+              maxBid: newBid,
               isEnded: false,
               lastBidder: '',
-              item: item));
+              item: item.uid,);
+      
       item.price = newBid;
       item.lastBid = _authService.user!.uid;
+      item.bids.add(newbid);
       if (await _bidService.updateItem(item: item)) {
         print('Bid updated successfully');
       } else {
