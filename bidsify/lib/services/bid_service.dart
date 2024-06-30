@@ -51,8 +51,8 @@ class BidService {
   }
 
   Stream<QuerySnapshot<ItemModel>> getItemsbyownerid(
-      {required String ownerId}) {
-    return items!.where('ownerId', isEqualTo: ownerId).snapshots()
+      ) {
+    return items!.where('ownerId', isEqualTo: _authService.user!.uid).snapshots()
         as Stream<QuerySnapshot<ItemModel>>;
   }
 
@@ -62,9 +62,9 @@ class BidService {
         .snapshots() as Stream<List<BidModel>>;
   }
 
-  Stream<List<BidModel>> getBidsbyownerID() {
+  Stream<QuerySnapshot<BidModel>> getBidsbyownerID() {
     return bids!.where('ownerId', isEqualTo: _authService.user!.uid).snapshots()
-        as Stream<List<BidModel>>;
+        as Stream<QuerySnapshot<BidModel>>;
   }
 
   Future<bool> updateItem ({required ItemModel item}) async {
