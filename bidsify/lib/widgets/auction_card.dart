@@ -98,7 +98,7 @@ class BidCard extends StatelessWidget {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-            child: transactionId != null
+            child: !isHistory
                 ? Row(
                     children: [
                       Container(
@@ -113,20 +113,15 @@ class BidCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 24),
-                      !isHistory ? myButton(
+                      myButton(
                         height: 50,
                         width: 120,
                         text: buttonText,
                         onClick: onClick,
-                      ) : Container(),
+                      )
                     ],
                   )
-                : myButton(
-                    height: 50,
-                    width: 120,
-                    text: buttonText,
-                    onClick: onClick,
-                  ),
+                : Container()
           ),
         ],
       ),
