@@ -310,6 +310,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                             fillColor: Colors.white,
                             labelStyle: TextStyle(color: Colors.white)),
                         keyboardType: TextInputType.number,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                         onChanged: (value) {
                           newBid = double.parse(value);
                         },
