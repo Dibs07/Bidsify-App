@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/services/auth_service.dart';
+import 'package:notes/services/data_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,11 +14,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late AuthService _authService;
+late DataService _dataService;
 
+  late String _displayName;
+  late String _profilepic;
   @override
   void initState() {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
+_dataService = GetIt.instance.get<DataService>();
     if (_authService.user == null) {
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
     }

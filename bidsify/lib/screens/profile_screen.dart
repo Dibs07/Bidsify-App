@@ -21,26 +21,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late AuthService _authService;
   late DataService _dataService;
   late BidService _bidService;
-  late String _displayName;
-  late String _profilepic;
+   late Future<void> _loadUserDataFuture;
+   String _displayName = '';
+  String _profilepic = '';
   @override
   void initState() {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
     _dataService = GetIt.instance.get<DataService>();
     _bidService = GetIt.instance.get<BidService>();
-    if (_authService.user == null) {
-      Navigator.pushNamed(context, '/login');
+     if (_authService.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
     }
-    Stream<QuerySnapshot<UserModel>> userModel =
-        _dataService.getUser();
-    userModel.listen((event) {
+    
+  }
+Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
       _displayName = event.docs[0].data().name!;
       _profilepic = event.docs[0].data().profilePic;
     });
-    print(_profilepic);
   }
-
 
   logout() async {
     await _authService.logout();
