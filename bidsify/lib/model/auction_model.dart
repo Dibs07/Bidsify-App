@@ -1,30 +1,30 @@
 import 'package:notes/model/bid_model.dart';
+import 'package:notes/model/item_model.dart';
 
 class AuctionModel {
   final String uid;
   final String auctioneerId;
-  final List<BidModel> bids;
+  final List<ItemModel> items;
   final DateTime startTime;
   final DateTime endTime;
-  final String itemId;
+
 
   AuctionModel({
     required this.uid,
     required this.auctioneerId,
-    required this.bids,
+    required this.items,
     required this.startTime,
     required this.endTime,
-    required this.itemId,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
       'auctioneerId': auctioneerId,
-      'bids': bids,
+      'items': items.map((item) => item.toMap()).toList(),
       'startTime': startTime,
       'endTime': endTime,
-      'itemId': itemId
+
     };
   }
 
@@ -32,10 +32,10 @@ class AuctionModel {
     return AuctionModel(
       uid: map['uid'] ?? "",
       auctioneerId: map['auctioneerId'] ?? "",
-      bids: map['bids'] ?? "",
+      items: List<ItemModel>.from(map['items']?.map((x) => ItemModel.fromMap(x))),
       startTime: DateTime.fromMillisecondsSinceEpoch(map['startTime']),
       endTime: DateTime.fromMillisecondsSinceEpoch(map['endTime']),
-      itemId: map['itemId'] ?? "",
+
     );
   }
 }

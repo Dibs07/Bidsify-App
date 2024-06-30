@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:notes/model/bid_model.dart';
+import 'package:notes/model/item_model.dart';
 import 'package:notes/model/user_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/services/bid_service.dart';
 import 'package:notes/services/data_service.dart';
+import 'package:notes/widgets/auction_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,12 +20,14 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late AuthService _authService;
   late DataService _dataService;
+  late BidService _bidService;
   late String _displayName;
   @override
   void initState() {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
     _dataService = GetIt.instance.get<DataService>();
+    _bidService = GetIt.instance.get<BidService>();
     if (_authService.user == null) {
       Navigator.pushNamed(context, '/login');
     }
@@ -30,7 +36,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _displayName = "john doe";
   }
 
-  var bids = ["Bid1", "Bid2", "Bid3", "Bid4"];
 
   logout() async {
     await _authService.logout();
@@ -91,28 +96,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: bids.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Text(
-                          bids[index],
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+           Expanded(
+            child: StreamBuilder(
+              stream: _bidService.getBidsbyownerID(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No items found'));
+                }
+
+                final items = snapshot.data!.docs;
+
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    BidModel item = items[index].data();
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: BidCard(
+                        title: item.item,
+                        bidder: _authService.user!.uid,
+                        latestBid: item.maxBid,
+                        onClick: () {},
+                      ),
+                    );
+                  },
+                );
+              },
             ),
+          ),
           ],
         ),
       ),

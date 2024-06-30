@@ -63,7 +63,7 @@ class BidService {
   }
 
   Stream<QuerySnapshot<BidModel>> getBidsbyownerID() {
-    return bids!.where('ownerId', isEqualTo: _authService.user!.uid).snapshots()
+    return bids!.where('lastBidder', isEqualTo: _authService.user!.uid).snapshots()
         as Stream<QuerySnapshot<BidModel>>;
   }
 
