@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:notes/constants/constants.dart';
 import 'package:notes/services/auth_service.dart';
+import 'package:notes/services/data_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,13 +14,35 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late AuthService _authService;
+late DataService _dataService;
 
+  late Future<void> _loadUserDataFuture;
+   String _displayName = '';
+  String _profilepic = '';
   @override
   void initState() {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
+_dataService = GetIt.instance.get<DataService>();
+    if (_authService.user == null) {
+      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+    }
+    if (_authService.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
+    }
   }
-
+Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
+      _displayName = event.docs[0].data().name!;
+      _profilepic = event.docs[0].data().profilePic;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
                 child: Text(
-                  'Welcome,Pratyush',
+                  'Welcome,${_displayName}',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 30,

@@ -5,17 +5,19 @@ import 'package:notes/model/user_model.dart';
 class BidCard extends StatelessWidget {
   final String title;
   final String bidder;
-  final double latestBid;
-
+  late double? latestBid;
+  final String buttonText;
+  final bool isHistory;
   final VoidCallback onClick;
   final String? transactionId;
-  const BidCard({
+   BidCard({
     super.key,
     required this.title,
     required this.bidder,
     required this.latestBid,
-
+    required this.buttonText,
     required this.onClick,
+    required this.isHistory,
     this.transactionId,
   });
 
@@ -54,7 +56,7 @@ class BidCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  '${bidder}',
+                  'By ${bidder}',
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 16,
@@ -96,7 +98,7 @@ class BidCard extends StatelessWidget {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-            child: transactionId != null
+            child: !isHistory
                 ? Row(
                     children: [
                       Container(
@@ -114,17 +116,12 @@ class BidCard extends StatelessWidget {
                       myButton(
                         height: 50,
                         width: 120,
-                        text: 'View',
+                        text: buttonText,
                         onClick: onClick,
-                      ),
+                      )
                     ],
                   )
-                : myButton(
-                    height: 50,
-                    width: 120,
-                    text: 'View',
-                    onClick: onClick,
-                  ),
+                : Container()
           ),
         ],
       ),

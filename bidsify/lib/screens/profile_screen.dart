@@ -1,7 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:notes/model/bid_model.dart';
+import 'package:notes/model/item_model.dart';
+import 'package:notes/model/user_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/services/bid_service.dart';
+import 'package:notes/services/data_service.dart';
+import 'package:notes/widgets/auction_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,23 +19,46 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late AuthService _authService;
+  late DataService _dataService;
+  late BidService _bidService;
+   late Future<void> _loadUserDataFuture;
+   String _displayName = '';
+  String _profilepic = '';
   @override
   void initState() {
     super.initState();
     _authService = GetIt.instance.get<AuthService>();
+    _dataService = GetIt.instance.get<DataService>();
+    _bidService = GetIt.instance.get<BidService>();
+     if (_authService.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
+    }
+    
+  }
+Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
+      _displayName = event.docs[0].data().name!;
+      _profilepic = event.docs[0].data().profilePic;
+    });
   }
 
-  var bids = ["Bid1", "Bid2", "Bid3", "Bid4"];
+  logout() async {
+    await _authService.logout();
+    Navigator.pushNamed(context, '/login');
+  }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
           TextButton(
-            // style: ButtonStyle(
-            //   backgroundColor:  Colors.black,
-            // ),
-
             onPressed: logout,
             child: Padding(
               padding: EdgeInsets.only(right: 10.0, top: 5.0),
@@ -46,20 +76,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: kMobileBackgroundColor,
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: 100.0),
+        padding: EdgeInsets.only(top: 20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Center(
               child: Image(
-                image: AssetImage('assets/default-profile.png'),
+                image: NetworkImage(_profilepic),
                 height: 100.0,
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 20.0),
               child: Text(
-                "Dibakar",
+                "${_displayName}",
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   fontSize: 20.0,
@@ -70,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Padding(
               padding: EdgeInsets.only(top: 15.0),
               child: Text(
-                "Email",
+                "${_authService.user!.email}",
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 18.0,
@@ -78,35 +107,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            Container(
-              child: ListView.builder(
-                  itemCount: bids.length,
+           Expanded(
+            child: StreamBuilder(
+              stream: _bidService.getBidsbyownerID(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No items found'));
+                }
+
+                final items = snapshot.data!.docs;
+
+                return ListView.builder(
+                  itemCount: items.length,
                   itemBuilder: (context, index) {
+                    BidModel item = items[index].data();
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            bids[index],
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: BidCard(
+                        isHistory: true,
+                        buttonText: '',
+                        title: item.item,
+                        bidder: _authService.user!.uid,
+                        latestBid: item.maxBid,
+                        onClick: () {},
                       ),
                     );
-                  }),
-            )
+                  },
+                );
+              },
+            ),
+          ),
           ],
         ),
       ),
     );
-  }
-
-  logout() async {
-    await _authService.logout();
-    Navigator.pushNamed(context, '/login');
   }
 }

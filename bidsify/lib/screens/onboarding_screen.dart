@@ -57,7 +57,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               
               const SizedBox(height: 10,),
           
-              const Text('Welcome to Biddify',
+              const Text('Welcome to Bidsify',
                 style: kHeadingTextStyle
               ),
           

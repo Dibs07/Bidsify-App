@@ -5,12 +5,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enefty_icons/enefty_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes/constants/constants.dart';
+import 'package:notes/model/bid_model.dart';
 import 'package:notes/model/item_model.dart';
 import 'package:notes/services/auth_service.dart';
 import 'package:notes/services/bid_service.dart';
+import 'package:notes/services/data_service.dart';
 import 'package:notes/services/storage_service.dart';
 import 'package:notes/widgets/auction_card.dart';
 
@@ -27,12 +30,34 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   late BidService _bidService;
   late StorageService _storageService;
   late AuthService _authService;
+  late DataService _dataService;
+  late Future<void> _loadUserDataFuture;
+  String _displayName = '';
+  String _profilepic = '';
+  late FToast fToast;
   @override
   void initState() {
     super.initState();
     _bidService = GetIt.instance.get<BidService>();
     _storageService = GetIt.instance.get<StorageService>();
     _authService = GetIt.instance.get<AuthService>();
+    _dataService = GetIt.instance.get<DataService>();
+    if (_authService.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, '/login');
+      });
+    } else {
+      _loadUserDataFuture = _loadUserData();
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    final userModelStream = _dataService.getUser();
+    final event = await userModelStream.first;
+    setState(() {
+      _displayName = event.docs[0].data().name!;
+      _profilepic = event.docs[0].data().profilePic;
+    });
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -77,6 +102,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             descrription: description,
             ownerId: _authService.user!.uid,
             price: double.parse(bid),
+            lastBid: _displayName,
             bids: [],
             itemPic: url,
           ),
@@ -155,11 +181,13 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Title',
-                            border: OutlineInputBorder(),
-                          ),
+                              hintText: 'Title',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.name,
                           controller: _titleController,
                           validator: (value) {
@@ -171,11 +199,13 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Description',
-                            border: OutlineInputBorder(),
-                          ),
+                              hintText: 'Description',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.text,
                           controller: _descriptionController,
                           validator: (value) {
@@ -187,11 +217,13 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                           decoration: InputDecoration(
-                            hintText: 'Enter Initial Bid',
-                            border: OutlineInputBorder(),
-                          ),
+                              hintText: 'Enter Initial Bid',
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(
+                                color: Colors.white,
+                              )),
                           keyboardType: TextInputType.number,
                           controller: _bidController,
                           validator: (value) {
@@ -223,60 +255,88 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     );
   }
 
-  var newBid;
+  late double newBid;
 
-  _onBidPlaced() {
-    if (newBid != null) {
-      // do
+  _onBidPlaced({required String bidId, required ItemModel item}) async {
+    if (newBid > item.price!) {
+      BidModel newbid = BidModel(
+        uid: bidId + DateTime.now().toString(),
+        maxBid: newBid,
+        isEnded: false,
+        lastBidder: _displayName,
+        lastBidderId: _authService.user!.uid,
+        item: item.name,
+      );
+      await _bidService.createbid(bid: newbid);
+      item.price = newBid;
+      item.lastBid = _displayName;
+      item.bids.add(newbid);
+      if (await _bidService.updateItem(item: item)) {
+        print('Bid updated successfully');
+      } else {
+        print('Failed to update bid');
+      }
+    } else {
+      print('Bid should be greater than the current bid');
     }
   }
 
-  placeBid() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: Text(
-                'Place your Bid Here',
-                style: kHeadingTextStyle.copyWith(fontSize: 35),
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              content: SizedBox(
-                height: 130,
-                child: Column(
-                  children: [
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        newBid = value;
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    myButton(
-                        width: double.infinity,
-                        height: 50,
-                        text: 'Save',
-                        onClick: _onBidPlaced)
-                  ],
+  placeBid(
+      {required BuildContext context,
+      required String bidId,
+      required ItemModel item}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return AlertDialog(
+                title: Text(
+                  'Place your Bid Here',
+                  style: kHeadingTextStyle.copyWith(fontSize: 35),
                 ),
-              ),
-              // actions: [
-              //   TextButton(
-              //     child: Text('Close'),
-              //     onPressed: () {
-              //       Navigator.of(context).pop();
-              //     },
-              //   ),
-              // ],
-            );
-          },
-        );
-      },
-    );
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                content: SizedBox(
+                  height: 130,
+                  child: Column(
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                            hintText: 'Enter your bid',
+                            border: OutlineInputBorder(),
+                            fillColor: Colors.white,
+                            labelStyle: TextStyle(color: Colors.white)),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          newBid = double.parse(value);
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      myButton(
+                          width: double.infinity,
+                          height: 50,
+                          text: 'Save',
+                          onClick: () => _onBidPlaced(bidId: bidId, item: item))
+                    ],
+                  ),
+                ),
+                // actions: [
+                //   TextButton(
+                //     child: Text('Close'),
+                //     onPressed: () {
+                //       Navigator.of(context).pop();
+                //     },
+                //   ),
+                // ],
+              );
+            },
+          );
+        },
+      );
+    });
   }
 
   @override
@@ -306,37 +366,41 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               ],
             ),
           ),
-          StreamBuilder(
-            stream: _bidService.getItems(ownerId: _authService.user!.uid),
-            builder: (context, snapshot) {
+          Expanded(
+            child: StreamBuilder(
+              stream: _bidService.getItems(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
 
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No items found'));
+                }
 
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return Center(child: Text('No items found'));
-              }
+                final items = snapshot.data!.docs;
 
-              final items = snapshot.data!.docs;
-                  
-
-              return ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  final ItemModel item = items[index].data();
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: BidCard(
-                      title: item.name,
-                      bidder: _authService.user!.uid,
-                      latestBid: item.price,
-                      onClick: placeBid,
-                    ),
-                  );
-                },
-              );
-            },
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    ItemModel item = items[index].data();
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: BidCard(
+                        isHistory: false,
+                        buttonText: 'Create Bid',
+                        title: item.name,
+                        bidder: _displayName,
+                        latestBid: item.price,
+                        onClick: () => placeBid(
+                            bidId: item.uid, context: context, item: item),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

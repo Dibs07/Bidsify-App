@@ -43,16 +43,16 @@ class BidService {
       print(e);
     }
   }
-  Stream<QuerySnapshot<ItemModel>> getItems(
-      {required String ownerId}) {
-    return items!.where('ownerId', isNotEqualTo: ownerId).snapshots()
-        as Stream<QuerySnapshot<ItemModel>>;
+
+  Stream<QuerySnapshot<ItemModel>> getItems() {
+    return items!
+        .where('ownerId', isNotEqualTo: _authService.user!.uid)
+        .snapshots() as Stream<QuerySnapshot<ItemModel>>;
   }
 
-
   Stream<QuerySnapshot<ItemModel>> getItemsbyownerid(
-      {required String ownerId}) {
-    return items!.where('ownerId', isEqualTo: ownerId).snapshots()
+      ) {
+    return items!.where('ownerId', isEqualTo: _authService.user!.uid).snapshots()
         as Stream<QuerySnapshot<ItemModel>>;
   }
 
@@ -62,17 +62,25 @@ class BidService {
         .snapshots() as Stream<List<BidModel>>;
   }
 
-  Stream<List<BidModel>> getBidsbyownerID() {
-    return bids!.where('ownerId', isEqualTo: _authService.user!.uid).snapshots()
-        as Stream<List<BidModel>>;
+  Stream<QuerySnapshot<BidModel>> getBidsbyownerID() {
+    return bids!.where('lastBidderId', isEqualTo: _authService.user!.uid).snapshots()
+        as Stream<QuerySnapshot<BidModel>>;
   }
-
-  Future<void> updateBid(
-      {required String bidId, required double bidValue}) async {
+  Future<void> endBid({required BidModel bid}) async {
     try {
-      await bids!.doc(bidId).update({'maxBid': bidValue});
+      await bids?.doc(bid.uid).update(bid.toMap());
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<bool> updateItem ({required ItemModel item}) async {
+    try {
+      await items?.doc(item.uid).update(item.toMap());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 }

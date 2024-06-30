@@ -4,8 +4,9 @@ class BidModel {
   final String uid;
   final double maxBid;
   final bool isEnded;
+  final String lastBidderId;
   final String lastBidder;
-  final ItemModel item;
+  final String item;
 
 
   BidModel({
@@ -14,6 +15,7 @@ class BidModel {
     required this.isEnded,
     required this.lastBidder,
     required this.item,
+    required this.lastBidderId,
 
   });
 
@@ -25,6 +27,7 @@ class BidModel {
       'isEnded': isEnded,
       'lastBidder': lastBidder,
       'item': item,
+      'lastBidderId': lastBidderId,
 
     };
   }
@@ -32,12 +35,12 @@ class BidModel {
   factory BidModel.fromMap(Map<String, dynamic> map) {
     return BidModel(
       uid: map['uid'] ?? '',
-
       maxBid: map['maxBid'] ?? '',
       isEnded: map['isEnded'] ?? false,
       lastBidder: map['lastBidder'] ?? '',
       item: map['item'] ?? '',
-
+      lastBidderId: map['lastBidderId'] ?? '',
     );
   }
+
 }
